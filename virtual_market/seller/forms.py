@@ -16,6 +16,7 @@ class UserRegisterForm(UserCreationForm):
             raise forms.ValidationError('This Email is currently in use. Please Try Again!')
         return email
 
+
 class UserUpdateForm(forms.ModelForm):
     email= forms.EmailField()
 
@@ -23,7 +24,8 @@ class UserUpdateForm(forms.ModelForm):
         model= User
         fields= ['username', 'email']
 
+
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
-        model= Profile
-        fields= ['image']
+        model = Profile
+        fields = ['store_name','store_location','store_logo']

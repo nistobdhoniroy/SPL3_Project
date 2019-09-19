@@ -12,6 +12,8 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
+from .models import Profile
+from django.views.generic import DetailView
 
 
 # Create your views here.
@@ -75,11 +77,17 @@ def profile(request):
             return redirect('profile')
 
     else:
-        u_form= UserUpdateForm(instance=request.user)
-        p_form= ProfileUpdateForm(instance=request.user.profile)
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
 
     context={
         'u_form': u_form,
         'p_form': p_form
     }
     return render(request, 'seller/profile.html', context)
+
+
+@login_required
+def view_profile(request):
+    return render(request, 'seller/seller_profile.html')
+
