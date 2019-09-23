@@ -87,7 +87,14 @@ def profile(request):
     return render(request, 'seller/profile.html', context)
 
 
-@login_required
-def view_profile(request):
-    return render(request, 'seller/seller_profile.html')
+def view_profile(request, username):
+    seller = User.objects.get(username=username)
+    return render(request, 'seller/seller_profile.html', {"seller":seller})
+
+
+def seller_home(request):
+    context={
+        'sellers': User.objects.all()
+    }
+    return render(request, 'seller/seller_home.html', context)
 

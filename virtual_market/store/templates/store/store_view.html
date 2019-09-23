@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <br>
+    {% if product.count > 0 %}
+        {% for pr in product %}
+            <h1> {{ pr.product_name}} </h1>
+            <p> Tk. {{ pr.price }} </p>
+        {% endfor %}
+    {% else%}
+        <h1> No product exists </h1>
+    {% endif %}
+</body>
+</html>

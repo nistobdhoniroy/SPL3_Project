@@ -1,0 +1,38 @@
+{#<div>#}
+{#    <h5>{{product.product_name}}</h5>#}
+{#    <p><b>Taka.{{product.price}} </b></p>#}
+{#    <p>{{product.description}}</p>#}
+{#    <a href="{% url 'view-profile' product.seller.username %}"> {{product.seller.username}}</a>#}
+{#</div>#}
+
+{% extends 'store/basic.html' %}
+
+{% block title%} {{product.product_name}} - {{product.seller.profile.store_name}}{% endblock %}
+{% block body %}
+<div class="container my-4">
+    <div class="row">
+    <div class="col-md-4">
+    <div class="row">
+        <img src="/media/{{product.product_image}}" width="233px" height="385px">
+    </div>
+        <div class="row">
+            <button class="btn btn-danger mx-3">Buy Now</button>
+            <button id="pr{{product.id}}" class="btn btn-primary cart">Add To Cart</button>
+        </div>
+
+
+    </div>
+
+    <div class="col-md-8">
+        <h5>{{product.product_name}}</h5>
+        <p><b> Taka. {{product.price}} </b></p>
+        <p>{{product.description}}</p>
+        <p>{{product.product_image}} </p>
+
+    </div>
+    </div>
+
+
+</div>
+
+{% endblock %}
