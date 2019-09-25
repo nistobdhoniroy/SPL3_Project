@@ -2,6 +2,6 @@
 {% for seller in sellers%}<br>
 Seller {{forloop.counter}}: 
     <h1> {{seller.profile.store_name}} </h1>
-    <a href="profile/{{seller.username}}"> {{seller.username}} </a>
+    <a href="{% url 'view_profile' seller.username %}"> {{seller.username}} </a>
 <br>
 {% endfor %}

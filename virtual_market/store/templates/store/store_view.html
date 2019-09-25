@@ -1,18 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <br>
-    {% if product.count > 0 %}
-        {% for pr in product %}
-            <h1> {{ pr.product_name}} </h1>
-            <p> Tk. {{ pr.price }} </p>
-        {% endfor %}
-    {% else%}
-        <h1> No product exists </h1>
-    {% endif %}
-</body>
-</html>
+{% extends 'store/basic.html' %}
+
+{% block title%} {{seller.profile.store_name}}{% endblock %}
+
+{% block css %}
+   .allProds {
+      display: inline-block;
+      height: 50px;
+      top: auto;
+      bottom: auto;
+      background-color:yellow;
+    }
+    .prod-img{
+       height: 300px;
+    }
+{% endblock %}
+
+{% block content %}
+  {% if product.count > 0 %}
+      {% for pr in product %}
+          <div class="card allProds" style="width: 18rem;">
+            <img src="/media/{{pr.product_image}}" class="card-img-top prod-img" alt="...">
+            <div class="card-body">
+              <h5 class="card-title"> {{ pr.product_name}} </h5>
+              <p class="card-text"> {{ pr.description|slice:"0:100" }}</p>
+              <a href="{% url 'product_view' pr.id %}" class="btn btn-primary">View Product</a>
+            </div>
+          </div>
+      {% endfor %}
+  {% else%}
+      <h1> No product exists </h1>
+  {% endif %} 
+    
+{% endblock %}
+
