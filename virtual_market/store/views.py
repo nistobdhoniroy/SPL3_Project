@@ -27,9 +27,14 @@ def store_view(request, username):
     return render(request, 'store/store_view.html', {'product': product})
 
 
+def home_view(request):
+    sellers= User.objects.all().exclude(is_superuser=True)
+    return render(request, 'store/home.html', {'sellers': sellers})
+
+
 class ProductAddView(LoginRequiredMixin, CreateView):
     model = Product
-    fields = ['product_name', 'category', 'subcategory', 'price', 'description', 'product_image']
+    fields = ['product_name', 'category', 'price', 'description', 'product_image']
 
     def form_valid(self, form):
         form.instance.seller = self.request.user
@@ -39,7 +44,7 @@ class ProductAddView(LoginRequiredMixin, CreateView):
 
 class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Product
-    fields = ['product_name', 'category', 'subcategory', 'price', 'description', 'product_image']
+    fields = ['product_name', 'category', 'price', 'description', 'product_image']
 
     def form_valid(self, form):
         form.instance.seller = self.request.user
