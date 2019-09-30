@@ -29,8 +29,5 @@ urlpatterns = [
     #url(r'profile/(?P<username>[a-zA-Z0-9]+)$', seller_views.view_profile, name='view-profile'),
 
     path('<str:username>/profile', seller_views.view_profile, name='view_profile'),
-    #path('{{user.username}}', seller_views.view_profile, name='view_profile'),
-    path('', seller_views.seller_home, name='seller_home'),
-    # path('view_profile/', seller_views.SellerDetailView.as_view(template_name='seller/seller_profile.html'),
-    #      name='view_profile'),
+    # path('', seller_views.seller_home, name='seller_home'),
 ]

@@ -12,7 +12,8 @@
 {#    <a href="{% url 'store_view' product.seller.username %}"> Go to Store {{product.seller.profile.store_name}}  </a>#}
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'store_view' product.seller.username %}">Products</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'home_view'%}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'store_view' product.seller.username %}"> {{  product.seller.profile.store_name }}</a></li>
         <li class="breadcrumb-item"><a href="#">{{product.product_name}}</a></li>
         <li class="breadcrumb-item active" aria-current="page">Data</li>
       </ol>

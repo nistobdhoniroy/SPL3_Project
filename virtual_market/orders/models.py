@@ -1,41 +1,44 @@
 from django.db import models
+from store.models import Product
 
 # Create your models here.
 
-class UserAddress(models.Model):
-    BILLING = 'billing'
-    SHIPPING = 'shipping'
-    ADDRESS_TYPES = (
-        (BILLING, 'Billing'),
-        (SHIPPING, 'Shipping')
-        )
-    #user = models.ForeignKey(UserCheckout)
-    type = models.CharField(max_length=100, choices=ADDRESS_TYPES)
+
+class OrderPlacer(models.Model):
+    name = models.CharField(max_length=90)
     address = models.CharField(max_length=300)
-    state =  models.CharField(max_length=100)
-    zipcode = models.PositiveIntegerField()
+    city = models.CharField(max_length=111)
+    zip_code = models.CharField(max_length=111)
+    phone = models.CharField(max_length=111, default="")
+    email = models.CharField(max_length=111)
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.address
 
     def get_full_address(self):
-        return '{0}, {1}, {2}'.format(self.address, self.state, self.zipcode)
+        return '{0}, {1}, {2}'.format(self.address, self.city, self.zipcode)
+
 
 class Orders(models.Model):
     order_id = models.AutoField(primary_key=True)
-    items_json = models.CharField(max_length=5000)
-    name = models.CharField(max_length=90)
-    email = models.CharField(max_length=111)
-    billing_address = models.ForeignKey(UserAddress, related_name='billing_address')
-    shipping_address = models.ForeignKey(UserAddress, related_name='shipping_address')
-    city = models.CharField(max_length=111)
-    state = models.CharField(max_length=111)
-    zip_code = models.CharField(max_length=111)
-    phone = models.CharField(max_length=111, default="")
+    order_placer = models.OneToOneField(OrderPlacer, on_delete=models.CASCADE)
+    timestamp = models.DateField(auto_now_add=True)
+
+
+class OrderItems(models.Model):
+    order = models.ForeignKey(Orders, null=True, on_delete=models.CASCADE)
+    item = models.ForeignKey(Product, null=True, on_delete=models.CASCADE)
+    quantity = models.IntegerField(blank=True)
+
+    def __str__(self):
+        return "{0} {1} @ {2}".format(self.quantity, self.item.product_name, self.item.price)
 
 
 class OrderUpdate(models.Model):
-    update_id  = models.AutoField(primary_key=True)
+    update_id = models.AutoField(primary_key=True)
     order_id = models.IntegerField(default="")
     update_desc = models.CharField(max_length=5000)
     timestamp = models.DateField(auto_now_add=True)
