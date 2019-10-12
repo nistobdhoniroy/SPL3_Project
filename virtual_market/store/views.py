@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from .models import Product
 from django.contrib.auth.models import User
 from django.views.generic import (
@@ -10,6 +10,8 @@ from django.views.generic import (
 )
 import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 # Create your views here.
 
 
@@ -24,7 +26,7 @@ def store_view(request, username):
 
     product = Product.objects.filter(seller=requested_seller[0])
     # abc = User.objects.filter(id =user_id)
-    return render(request, 'store/store_view.html', {'product': product})
+    return render(request, 'store/str_view.html', {'product': product, 'seller': requested_seller})
 
 
 def home_view(request):
@@ -35,6 +37,7 @@ def home_view(request):
 class ProductAddView(LoginRequiredMixin, CreateView):
     model = Product
     fields = ['product_name', 'category', 'price', 'description', 'product_image']
+    template_name = 'dashboard/product_form.html'
 
     def form_valid(self, form):
         form.instance.seller = self.request.user
@@ -45,6 +48,8 @@ class ProductAddView(LoginRequiredMixin, CreateView):
 class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Product
     fields = ['product_name', 'category', 'price', 'description', 'product_image']
+    template_name = 'dashboard/product_update.html'
+    #success_url = reverse_lazy('product_list',kwargs={'param': param})
 
     def form_valid(self, form):
         form.instance.seller = self.request.user
@@ -59,12 +64,22 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin,DeleteView):
-    model= Product
-    success_url='/'
+    model = Product
+    #success_url='/'
+
     def test_func(self):
-        product= self.get_object()
+        product = self.get_object()
         if self.request.user == product.seller:
             return True
         return False
+
+
+@login_required
+def dashboardProductListView(request, username):
+    requested_seller = request.user
+    product = Product.objects.filter(seller=requested_seller)
     
-    
+    context = {
+                'product': product, 
+                'seller': requested_seller}
+    return render(request, 'dashboard/product_list.html', context)

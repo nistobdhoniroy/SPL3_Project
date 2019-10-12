@@ -1,0 +1,43 @@
+{% extends 'dashboard/dashboard.html' %}
+{% load crispy_forms_tags %}
+
+{% block main%}
+    <h1> {{seller.username}}</h1>
+
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      
+      <th scope="col">Id</th>
+      <th scope="col">Product</th>
+      <th scope="col">Catetory</th>
+      <th scope="col">Handle</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if product.count > 0 %}
+        {% for pr in product %}
+
+            <tr>
+                <th scope="row">{{ pr.id}}</th>
+                
+                <td>{{ pr.product_name}}</td>
+                <td>{{pr.category}}</td>
+                <td> 
+                    <a href="{% url 'update-product' seller.username pr.id %}">
+                        <button type="button" class="btn btn-primary">Edit </button> 
+                    </a>  
+                </td>
+                <td> 
+                    <a href="{% url 'delete-product' seller.username pr.id %}">
+                        <button type="button" class="btn btn-danger">Remove </button> 
+                    </a>  
+                </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+   
+  </tbody>
+</table>
+
+{% endblock %}

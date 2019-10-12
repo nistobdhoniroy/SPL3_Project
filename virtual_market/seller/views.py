@@ -82,9 +82,10 @@ def profile(request):
 
     context={
         'u_form': u_form,
-        'p_form': p_form
+        'p_form': p_form,
+        'seller': request.user,
     }
-    return render(request, 'seller/profile.html', context)
+    return render(request, 'dashboard/dashboard.html', context)
 
 
 def view_profile(request, username):

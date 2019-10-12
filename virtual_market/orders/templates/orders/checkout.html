@@ -1,5 +1,6 @@
 {% extends 'store/basic.html' %}
 {% block title%} Checkout {% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="col my-4">
@@ -96,16 +97,20 @@
     }
     document.getElementById('cart').innerHTML = sum;
 
-    console.log('I want');
+
     console.log(typeof(cart));
     $('#itemsJson').val(JSON.stringify(cart));
 
-    //$('#itemsJson').val(cart);
+    {% comment %} let cartItems= JSON.parse(cart);
+    console.log('I want');
+    console.log(typeof(cartItems)); {% endcomment %}
+
+    //$('#itemsJson').val(cartItems);
 
     {% if thank %}
     alert('Thanks for ordering with us. Your order is is {{id}}. Use it to track your order using our order tracker');
     localStorage.clear();
-    //document.location = "/shop";
+    document.location = "{% url 'home_view' %}";
     {% endif %}
     </script>
 {% endblock %}

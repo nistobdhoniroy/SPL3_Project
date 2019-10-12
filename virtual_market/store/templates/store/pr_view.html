@@ -4,7 +4,7 @@
 {#    <p>{{product.description}}</p>#}
 {#    <a href="{% url 'view-profile' product.seller.username %}"> {{product.seller.username}}</a>#}
 {#</div>#}
-  
+
 {% extends 'store/basic.html' %}
 
 {% block title%} {{product.product_name}} - {{product.seller.profile.store_name}}{% endblock %}
@@ -47,9 +47,23 @@
     </div>
 </div>
 
-<div class="container my-4">
-    Hellp
-</div>
+    <ul class="nav nav-pills">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Active</a>
+      <p> Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+          Repudiandae fugiat et voluptate sunt officia vero molestias.
+</p>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link disabled" href="#">Disabled</a>
+  </li>
+</ul>
 
 {% endblock %}
 
@@ -108,7 +122,7 @@
         document.getElementById('popcart').setAttribute('data-content', popStr);
         $('#popcart').popover('show');
     }
-    
+
     function updateCart(cart) {
         var sum = 0;
 
@@ -124,7 +138,7 @@
 
     function clearCart() {
         cart = JSON.parse(localStorage.getItem('cart'));
-    
+
         localStorage.clear();
         cart = {};
         updateCart(cart);

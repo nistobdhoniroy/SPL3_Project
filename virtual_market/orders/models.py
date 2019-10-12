@@ -22,16 +22,16 @@ class OrderPlacer(models.Model):
         return '{0}, {1}, {2}'.format(self.address, self.city, self.zipcode)
 
 
-class Orders(models.Model):
+class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     order_placer = models.OneToOneField(OrderPlacer, on_delete=models.CASCADE)
     timestamp = models.DateField(auto_now_add=True)
+    
 
-
-class OrderItems(models.Model):
-    order = models.ForeignKey(Orders, null=True, on_delete=models.CASCADE)
+class OrderItem(models.Model):
     item = models.ForeignKey(Product, null=True, on_delete=models.CASCADE)
-    quantity = models.IntegerField(blank=True)
+    quantity = models.IntegerField(default=1)
+    order= models.ForeignKey(Order, on_delete= models.CASCADE)
 
     def __str__(self):
         return "{0} {1} @ {2}".format(self.quantity, self.item.product_name, self.item.price)

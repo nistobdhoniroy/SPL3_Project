@@ -1,0 +1,225 @@
+{% extends 'store/basic.html' %}
+
+{% block title%} {{seller.profile.store_name}}{% endblock %}
+
+
+{% block css%}
+    body{
+	color: #434444;
+}
+.container{
+	padding-top: 50px;
+}
+hr{
+	width: 300px;
+	border: 3px solid #434444;
+}
+
+/* Product Grid */
+.product-grid{
+	padding-bottom: 20px;
+	padding-top: 20px;
+}
+.product-grid:hover{
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.image{
+	position: relative;
+}
+.overlay{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+	transition: .5s ease;
+	background-color: rgba(67, 68, 68, 0.7);
+}
+.image:hover .overlay{
+	opacity: 1;
+}
+.detail{
+	color: #fff;
+	font-size: 20px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+}
+
+.buy{
+	background-color: transparent;
+	color: #434444;
+	border-radius: 0;
+	border: 1px solid #434444;
+	width: 100%;
+	margin-top: 20px;
+}
+.buy:hover{
+	background-color: #434444;
+	color: #fff;
+}
+
+img.w-100{
+    height: 250px;
+}
+{% endblock %}
+
+{% block content %}
+
+	<div class="container">
+		<h1 class="text-center">Store</h1>
+		<hr>
+		<div class="row">
+			<div class="col-md-4 product-grid">			
+				<p> Hello {{ seller.username }} </p>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="container">
+		<h1 class="text-center">Products</h1>
+		<hr>
+
+
+		<div class="row">
+			<!-- Product  -->
+        {% if product.count > 0 %}
+        {% for pr in product %}
+			<div class="col-md-4 product-grid">
+				<div class="image">
+					<a href="{% url 'product_view' pr.id %}">
+						<img src="/media/{{pr.product_image}}" class="w-100">
+						<div class="overlay">
+							<div class="detail">View Details</div>
+						</div>
+					</a>
+				</div>
+				<h5 class="text-center">{{ pr.product_name}}</h5>
+				<h5 class="text-center">Price: {{ pr.price}}</h5>
+				<a href="#" class="btn buy ">BUY</a>
+			</div>
+
+
+        {% endfor %}
+        {% else%}
+            <h1> No product exists </h1>
+        {% endif %}
+
+		</div>
+
+	</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+{#<{% extends 'store/basic.html' %}#}
+{##}
+{#{% block title%} {{seller.profile.store_name}}{% endblock %}#}
+{##}
+{#{% block css %}#}
+{#body{#}
+{#	color: #434444;#}
+{#}#}
+{#.container{#}
+{#	padding-top: 50px;#}
+{#}#}
+{#hr{#}
+{#	width: 300px;#}
+{#	border: 3px solid #434444;#}
+{#}#}
+{##}
+{#/* Product Grid */#}
+{#.product-grid{#}
+{#    height: 200px;#}
+{#    display: inline-block;#}
+{#	padding-bottom: 20px;#}
+{#	padding-top: 20px;#}
+{#}#}
+{#.product-grid:hover{#}
+{#	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);#}
+{#}#}
+{#.image{#}
+{#	position: relative;#}
+{#}#}
+{#.overlay{#}
+{#	position: absolute;#}
+{#	top: 0;#}
+{#	bottom: 0;#}
+{#	left: 0;#}
+{#	right: 0;#}
+{#	height: 100%;#}
+{#	width: 100%;#}
+{#	opacity: 0;#}
+{#	transition: .5s ease;#}
+{#	background-color: rgba(67, 68, 68, 0.7);#}
+{#}#}
+{#.image:hover .overlay{#}
+{#	opacity: 1;#}
+{#}#}
+{#.detail{#}
+{#	color: #fff;#}
+{#	font-size: 20px;#}
+{#	position: absolute;#}
+{#	top: 50%;#}
+{#	left: 50%;#}
+{#	transform: translate(-50%, -50%);#}
+{#	-ms-transform: translate(-50%, -50%);#}
+{#}#}
+{##}
+{#.buy{#}
+{#	background-color: transparent;#}
+{#	color: #434444;#}
+{#	border-radius: 0;#}
+{#	border: 1px solid #434444;#}
+{#	width: 100%;#}
+{#	margin-top: 20px;#}
+{#}#}
+{##}
+{##}
+{#.buy:hover{#}
+{#	background-color: #434444;#}
+{#	color: #fff;#}
+{#}#}
+{##}
+{##}
+{#{% endblock %}#}
+{##}
+{#{% block content %}#}
+{#  {% if product.count > 0 %}#}
+{#      {% for pr in product %}#}
+{#          {% if forloop.counter0 != 0 and  forloop.counter0|divisibleby:3 %} <div class="row"> {% endif %}#}
+{#			<div class="col-md-3 product-grid">#}
+{#				<div class="image">#}
+{#					<a href="#">#}
+{#						<img src="/media/{{pr.product_image}}" class="w-100">#}
+{#						<div class="overlay">#}
+{#							<div class="detail">View Details</div>#}
+{#						</div>#}
+{#					</a>#}
+{#				</div>#}
+{#				<h5 class="text-center">{{ pr.product_name}}</h5>#}
+{#				<h5 class="text-center">Price: {{ pr.price}}</h5>#}
+{#				<a href="#" class="btn buy">BUY</a>#}
+{#            </div>#}
+{#            {% if  forloop.counter0 != 0 and forloop.counter0|divisibleby:3 %}</div> {% endif %}#}
+{#      {% endfor %}#}
+{#  {% else%}#}
+{#      <h1> No product exists </h1>#}
+{#  {% endif %}#}
+{##}
+{#{% endblock %}#}
