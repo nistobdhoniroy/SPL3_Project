@@ -39,7 +39,7 @@
       <div class="sidebar-sticky">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link active" href="#">
+            <a class="nav-link active" href="{% url 'dashboard' seller.username %}">
               <span data-feather="home"></span>
               Dashboard <span class="sr-only">(current)</span>
             </a>
@@ -52,7 +52,7 @@
           </li>
           <li class="nav-item">
             {% block first_li %}
-            <a class="nav-link" href="{% url 'add-product' username=seller.username %}">
+            <a class="nav-link" href="{% url 'add-product' seller.username %}">
               <span data-feather="shopping-cart"></span>
               Add Products
             </a>
@@ -60,7 +60,7 @@
           </li>
           <li class="nav-item">
             {% block second_li %}
-            <a class="nav-link" href="{% url 'product_list' username=seller.username %}">
+            <a class="nav-link" href="{% url 'product_list' seller.username %}">
               <span data-feather="users"></span>
               Product List
             </a>

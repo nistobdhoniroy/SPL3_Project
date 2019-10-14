@@ -23,7 +23,7 @@ def register(request):
         form= UserRegisterForm(request.POST)
         print(form.errors)
         if form.is_valid():
-            seller= form.save(commit= False)
+            seller = form.save(commit= False)
             seller.is_active = False
             seller.save()
             # username = form.cleaned_data.get('username')
