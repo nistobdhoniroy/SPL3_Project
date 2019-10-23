@@ -23,11 +23,10 @@
 <div class="container my-4">
     <div class="row">
     <div class="col-md-4">
-    <div class="row">
-        <img src="/media/{{product.product_image}}" width="233px" height="385px">
+        <div class="row">
+            <img src="/media/{{product.image}}" width="233px" height="385px">
 
-
-    </div>
+        </div>
         <div class="row">
             <button class="btn btn-danger mx-3">Buy Now</button>
 
@@ -48,87 +47,7 @@
 </div>
 
 <div class="container my-4">
-    Hellp
+    Hello
 </div>
 
-{% endblock %}
-
-{% block js %}
-<script>
-
-    console.log('working');
-    if(localStorage.getItem('cart') == null){
-        var cart = {};
-    }
-    else
-    {
-        cart = JSON.parse(localStorage.getItem('cart'));
-        document.getElementById('cart').innerHTML = Object.keys(cart).length;
-    }
-
-     $('.divpr').on('click', 'button.cart', function(){
-        //console.log('clicked');
-        var idstr = this.id.toString();
-        //console.log(idstr);
-        if (cart[idstr] !=undefined){
-            cart[idstr][0] = cart[idstr][0] + 1;
-        }
-        else
-        {
-            qty = 1;
-            name = document.getElementById('name'+ idstr).innerHTML;
-            unit_price = document.getElementById('price'+ idstr).innerHTML;
-            cart[idstr] = [qty, name, unit_price];
-        }
-        console.log(cart);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        //document.getElementById('cart').innerHTML = Object.keys(cart).length;
-        //console.log(Object.keys(cart).length);
-        updateCart(cart);
-        updatePopover(cart);
-    });
-    //document.getElementById("popcart").setAttribute('data-content', '<h5>Cart for your items in my shopping cart</h5>');
-
-    $('#popcart').popover();
-    updatePopover(cart);
-    updateCart(cart);
-
-    function updatePopover(cart) {
-    //console.log('We are inside updatePopover');
-    var popStr = "";
-    popStr = popStr + "<h5> Cart for your items in my shopping cart </h5><div class='mx-2 my-2'>";
-    var i = 1;
-    for (var item in cart) {
-        popStr = popStr + "<b>" + i + "</b>. ";
-        //console.log(document.getElementById('name' + item).innerHTML);
-        popStr = popStr + cart[item][1].slice(0, 19) + "... Qty: " + cart[item][0] + '<br>';
-        i = i + 1;
-    }
-        popStr = popStr + "</div> <a href='{% url 'checkout' %}'><button class='btn btn-primary' id ='checkout'>Checkout</button></a> <button class='btn btn-primary' onclick='clearCart()' id ='clearCart'>Clear Cart</button>     "
-        //console.log(popStr);
-        document.getElementById('popcart').setAttribute('data-content', popStr);
-        $('#popcart').popover('show');
-    }
-    
-    function updateCart(cart) {
-        var sum = 0;
-
-        for (var item in cart) {
-            //console.log(item);
-            sum = sum + cart[item][0];
-        }
-        localStorage.setItem('cart', JSON.stringify(cart));
-        document.getElementById('cart').innerHTML = sum;
-        //console.log(cart);
-        updatePopover(cart);
-    }
-
-    function clearCart() {
-        cart = JSON.parse(localStorage.getItem('cart'));
-    
-        localStorage.clear();
-        cart = {};
-        updateCart(cart);
-    }
-</script>
 {% endblock %}

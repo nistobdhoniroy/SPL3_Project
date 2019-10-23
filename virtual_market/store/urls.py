@@ -3,10 +3,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # customer
     path('', views.home_view, name='home_view'),
     path('<str:username>', views.store_view, name='store_view'),
     path('product/<int:myid>', views.productView, name='product_view'),
 
+    # seller
     path('product/new', views.ProductAddView.as_view(), name='add-product'),
     path('product/<int:pk>/update', views.ProductUpdateView.as_view(), name='update-product'),
     path('product/<int:pk>/delete', views.ProductDeleteView.as_view(), name='delete-product'),

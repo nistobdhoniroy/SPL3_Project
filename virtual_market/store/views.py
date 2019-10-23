@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from .models import Product, Category
+from accounts.models import Seller
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -33,10 +34,11 @@ def productView(request, myid):
 
 def store_view(request, username):
     requested_seller = User.objects.filter(username=username)
+    seller = Seller.objects.get(user= requested_seller[0])
 
-    product = Product.objects.filter(seller=requested_seller)
-    # abc = User.objects.filter(id =user_id)
-    return render(request, 'store/str_view.html', {'product': product, 'accounts': requested_seller})
+    product = Product.objects.filter(seller=requested_seller[0])
+
+    return render(request, 'store/str_view.html', {'product': product, 'seller': seller})
 
 
 def home_view(request):
