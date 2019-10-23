@@ -30,11 +30,11 @@ def checkout(request):
         my_list1 = []
 
         for key in item_data.keys():
-            product_id= key[2:]
+            product_id = key[2:]
             product = Product.objects.get(id= product_id)
-            quantity=item_data[key][0]
+            quantity = item_data[key][0]
             my_list1.append(product)
-            order_item= OrderItem(item= product, quantity= quantity , order= order)   
+            order_item = OrderItem(item=product, quantity=quantity, order=order)
             order_item.save()
 
         update = OrderUpdate(order_id=order.order_id, update_desc="The order has been placed")
@@ -46,15 +46,6 @@ def checkout(request):
 
     return render(request, 'orders/checkout.html')
 
-    #     {% for item in items_json %}
-    #
-    #     {% endfor %}
-    #
-    #
-    #     #order.save()
-
-    # return render(request, 'orders/checkout.html')
-
 
 def tracker(request):
     if request.method == "POST":
@@ -65,8 +56,7 @@ def tracker(request):
             order_placer=OrderPlacer.objects.filter(email= email)
             return HttpResponse(f'{order_placer}')
             order = Order.objects.filter(order_id=orderId)
-            
-            
+
             if len(order) > 0:
                 update = OrderUpdate.objects.filter(order_id=orderId)
                 updates = []
@@ -79,10 +69,9 @@ def tracker(request):
                 for item in order_items:
                     item_name= item.item.product_name
                     item_quantity= item.quantity
-                    items.append({'name':item_name,'quantity': item_quantity })
+                    items.append({'name': item_name,'quantity': item_quantity })
                 
                 response = json.dumps([updates, items], default=str)
-
 
                 return HttpResponse(response)
             else:

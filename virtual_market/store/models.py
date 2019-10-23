@@ -1,43 +1,44 @@
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
 from django.urls import reverse
 
 
 class Category(models.Model):
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE)
     category_title = models.CharField(max_length=50, default="")
     category_description = models.CharField(max_length=200, default="")
     slug = models.SlugField(unique=True, blank=True, null=True)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    publish_date = models.DateField()
+    status = models.BooleanField()
 
     def __str__(self):
-        return self.category_title
+        full_path = [self.category_title]
+        k = self.parent
+        if k is not None:
+            full_path.append(k.category_title)
+            k = k.parent
+        return '-->'.join(full_path[::-1])
 
-
-class SubCategory(models.Model):
-    sub_category_title = models.CharField(max_length=50, default="")
-    sub_category_description = models.CharField(max_length=200, default="")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    sub_category_id = models.AutoField
-
-    def __str__(self):
-        return self.sub_category_title
+    def get_absolute_url(self):
+        return reverse("category_list")
 
 
 class Product(models.Model):
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
-    product_id = models.AutoField
-    product_name = models.CharField(max_length=50)
-    category = models.ForeignKey(SubCategory, on_delete=models.CASCADE,  null=True)
+    name = models.CharField(max_length=50)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,  null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank= True)
     description = models.CharField(max_length=300)
     publish_date = models.DateField()
-    product_image = models.ImageField(upload_to='store/product_images', default="")
+    image = models.ImageField(upload_to='store/product_images', default="")
+    seller = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.product_name
+        return self.name
 
     # def get_absolute_url(self):
     #     return reverse("product_view", kwargs={"myid": self.pk})
 
     def get_absolute_url(self):
-        return reverse("product_list", kwargs={"username": self.seller.username})
+        return reverse("product_list")
 

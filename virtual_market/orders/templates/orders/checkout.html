@@ -101,11 +101,6 @@
     console.log(typeof(cart));
     $('#itemsJson').val(JSON.stringify(cart));
 
-    {% comment %} let cartItems= JSON.parse(cart);
-    console.log('I want');
-    console.log(typeof(cartItems)); {% endcomment %}
-
-    //$('#itemsJson').val(cartItems);
 
     {% if thank %}
     alert('Thanks for ordering with us. Your order is is {{id}}. Use it to track your order using our order tracker');

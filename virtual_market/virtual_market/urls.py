@@ -18,13 +18,11 @@ from django.conf.urls import url
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth import views as auth_views
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('seller/', include('seller.urls')),
-    url(r'seller/store/', include('store.urls')),
+    path('accounts/', include('accounts.urls')),
+    url(r'store/', include('store.urls')),
     url(r'order/', include('orders.urls')),
 ]
 if settings.DEBUG: 

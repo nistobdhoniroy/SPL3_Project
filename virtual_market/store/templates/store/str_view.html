@@ -71,6 +71,8 @@ img.w-100{
 
 {% block content %}
 
+
+
 	<div class="container">
 		<h1 class="text-center">Store</h1>
 		<hr>
@@ -86,10 +88,10 @@ img.w-100{
 	<div class="container">
 		<h1 class="text-center">Products</h1>
 		<hr>
-
-
+         {{ product }}
 		<div class="row">
 			<!-- Product  -->
+
         {% if product.count > 0 %}
         {% for pr in product %}
 			<div class="col-md-4 product-grid">
@@ -129,7 +131,7 @@ img.w-100{
 
 {#<{% extends 'store/basic.html' %}#}
 {##}
-{#{% block title%} {{seller.profile.store_name}}{% endblock %}#}
+{#{% block title%} {{accounts.profile.store_name}}{% endblock %}#}
 {##}
 {#{% block css %}#}
 {#body{#}

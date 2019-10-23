@@ -90,6 +90,7 @@ img.w-100{
 
 		<div class="row">
 			<!-- Product  -->
+            <h1> HELLO sellers.count </h1>
         {% if sellers.count > 0 %}
         {% for seller in sellers %}
 			<div class="col-md-4 product-grid">
@@ -123,13 +124,13 @@ img.w-100{
 
 {#{% block content %}#}
 {#  {% if sellers.count > 0 %}#}
-{#      {% for seller in sellers %}#}
+{#      {% for accounts in sellers %}#}
 {#          <div class="card allProds" style="width: 18rem;">#}
-{#            <img src="/media/{{seller.profile.store_logo}}" class="card-img-top prod-img" alt="...">#}
+{#            <img src="/media/{{accounts.profile.store_logo}}" class="card-img-top prod-img" alt="...">#}
 {#            <div class="card-body">#}
-{#              <h5 class="card-title"> {{ seller.profile.store_name}} </h5>#}
+{#              <h5 class="card-title"> {{ accounts.profile.store_name}} </h5>#}
 {#              {% comment %} <p class="card-text"> {{ pr.description|slice:"0:100" }}</p> {% endcomment %}#}
-{#              <a href="{% url 'store_view' seller.username %}" class="btn btn-primary">View Store</a>#}
+{#              <a href="{% url 'store_view' accounts.username %}" class="btn btn-primary">View Store</a>#}
 {#            </div>#}
 {#          </div>#}
 {#      {% endfor %}#}

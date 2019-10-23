@@ -12,9 +12,9 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-        <link rel="stylesheet" type="text/css" href="{% static 'seller/main.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'seller/seller_dashboard_navbars.css' %}">
-        <title> {% block title %} Blog {% endblock %} </title>
+        <link rel="stylesheet" type="text/css" href="{% static 'accounts/main.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'accounts/seller_dashboard_navbars.css' %}">
+        <title> {% block title %} Seller {% endblock %} </title>
         <style>
         {% block css %} {% endblock %}
         </style>
@@ -24,7 +24,7 @@
     <body>
 
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name {{ seller.username}} </a>
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name {{ accounts.username}} </a>
             <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
             <ul class="navbar-nav px-3">
                 <li class="nav-item text-nowrap">
@@ -39,7 +39,7 @@
       <div class="sidebar-sticky">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link active" href="{% url 'dashboard' seller.username %}">
+            <a class="nav-link active" href="{% url 'dashboard' accounts.username %}">
               <span data-feather="home"></span>
               Dashboard <span class="sr-only">(current)</span>
             </a>
@@ -51,20 +51,22 @@
             </a>
           </li>
           <li class="nav-item">
-            {% block first_li %}
-            <a class="nav-link" href="{% url 'add-product' seller.username %}">
+            <a class="nav-link" href="{% url 'add-product' %}">
               <span data-feather="shopping-cart"></span>
               Add Products
             </a>
-            {% endblock %}
           </li>
           <li class="nav-item">
-            {% block second_li %}
-            <a class="nav-link" href="{% url 'product_list' seller.username %}">
+            <a class="nav-link" href="{% url 'product_list'%}">
               <span data-feather="users"></span>
               Product List
             </a>
-            {% endblock %}
+          </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'category_list' %}">
+              <span data-feather="shopping-cart"></span>
+               Category
+            </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">

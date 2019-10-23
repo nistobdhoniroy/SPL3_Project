@@ -1,9 +1,9 @@
-
+{% extends 'dashboard/dashboard.html' %}
 {% load crispy_forms_tags %}
 
 {% block main%}
 
-    {{ seller.username }} product edit
+    {{ accounts.username }} product edit
 
     <div class="content-section">
         <form method="POST" enctype="multipart/form-data">

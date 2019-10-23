@@ -2,14 +2,14 @@
 {#    <h5>{{product.product_name}}</h5>#}
 {#    <p><b>Taka.{{product.price}} </b></p>#}
 {#    <p>{{product.description}}</p>#}
-{#    <a href="{% url 'view-profile' product.seller.username %}"> {{product.seller.username}}</a>#}
+{#    <a href="{% url 'view-profile' product.accounts.username %}"> {{product.accounts.username}}</a>#}
 {#</div>#}
   
 {% extends 'store/basic.html' %}
 
 {% block title%} {{product.product_name}} - {{product.seller.profile.store_name}}{% endblock %}
 {% block content %}
-{#    <a href="{% url 'store_view' product.seller.username %}"> Go to Store {{product.seller.profile.store_name}}  </a>#}
+{#    <a href="{% url 'store_view' product.accounts.username %}"> Go to Store {{product.accounts.profile.store_name}}  </a>#}
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home_view'%}">Home</a></li>
@@ -55,6 +55,7 @@
 
 {% block js %}
 <script>
+
     console.log('working');
     if(localStorage.getItem('cart') == null){
         var cart = {};
@@ -66,9 +67,9 @@
     }
 
      $('.divpr').on('click', 'button.cart', function(){
-        console.log('clicked');
+        //console.log('clicked');
         var idstr = this.id.toString();
-        console.log(idstr);
+        //console.log(idstr);
         if (cart[idstr] !=undefined){
             cart[idstr][0] = cart[idstr][0] + 1;
         }
