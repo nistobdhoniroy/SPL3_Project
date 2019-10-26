@@ -44,8 +44,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -102,10 +102,31 @@
       <workItem from="1571804246072" duration="25000" />
       <workItem from="1571804280116" duration="4276000" />
       <workItem from="1571822360766" duration="9696000" />
+      <workItem from="1571856247794" duration="53000" />
+      <workItem from="1571856306386" duration="1124000" />
+      <workItem from="1571899490400" duration="1355000" />
+      <workItem from="1571943512317" duration="33000" />
+      <workItem from="1571943550142" duration="7784000" />
+      <workItem from="1571982603480" duration="5482000" />
+      <workItem from="1571994031274" duration="12262000" />
+      <workItem from="1572063244041" duration="570000" />
+      <workItem from="1572063820154" duration="2210000" />
+      <workItem from="1572073740674" duration="17100000" />
+      <workItem from="1572096634629" duration="97000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/store/admin.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

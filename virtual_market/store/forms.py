@@ -1,7 +1,7 @@
 from django import forms
 from django.shortcuts import get_object_or_404
 
-from .models import Product, Category
+from .models import Product, Category, ProductComment
 
 
 class ProductForm(forms.ModelForm):
@@ -32,3 +32,7 @@ class CategoryForm(forms.ModelForm):
         self.fields['parent'].queryset = Category.objects.filter(seller=user)
 
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = ProductComment
+        fields = ['content']

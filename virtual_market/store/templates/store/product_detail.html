@@ -1,0 +1,213 @@
+{% extends 'store/basic.html' %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+.rating {
+    float:left;
+     width: 200px;
+}
+/* :not(:checked) is a filter, so that browsers that don’t support :checked don’t
+   follow these rules. Every browser that supports :checked also supports :not(), so
+   it doesn’t make the test unnecessarily selective */
+.rating:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+    clip:rect(0,0,0,0);
+}
+.rating:not(:checked) > label {
+    float:right;
+    width:1em;
+    padding:0 .1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:200%;
+    line-height:1.2;
+    color:#ddd;
+    text-shadow:1px 1px #bbb, 2px 2px #666, .1em .1em .2em rgba(0,0,0,.5);
+}
+.rating:not(:checked) > label:before {
+    content: '★ ';
+}
+.rating > input:checked ~ label {
+    color: #f70;
+    text-shadow:1px 1px #c60, 2px 2px #940, .1em .1em .2em rgba(0,0,0,.5);
+}
+.rating:not(:checked) > label:hover,
+.rating:not(:checked) > label:hover ~ label {
+    color: gold;
+    text-shadow:1px 1px goldenrod, 2px 2px #B57340, .1em .1em .2em rgba(0,0,0,.5);
+}
+.rating > input:checked + label:hover,
+.rating > input:checked + label:hover ~ label,
+.rating > input:checked ~ label:hover,
+.rating > input:checked ~ label:hover ~ label,
+.rating > label:hover ~ input:checked ~ label {
+    color: #ea0;
+    text-shadow:1px 1px goldenrod, 2px 2px #B57340, .1em .1em .2em rgba(0,0,0,.5);
+}
+.rating > label:active {
+    position:relative;
+    top:2px;
+    left:2px;
+}
+{% endblock %}
+
+
+
+{% block title%} {{product.name}} - {{product.seller.username}}{% endblock %}
+{% block content %}
+{#    <a href="{% url 'store_view' product.accounts.username %}"> Go to Store {{product.accounts.profile.store_name}}  </a>#}
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home_view'%}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'store_view' product.seller.username %}"> {{  product.seller.profile.store_name }}</a></li>
+        <li class="breadcrumb-item"><a href="#">{{product.product_name}}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Data</li>
+      </ol>
+    </nav>
+    <br>
+
+<div class="container">
+    <div class="row">
+    <div class="col-md-3">
+        <div class="row">
+            <img src="/media/{{product.image}}" width="233px" height="385px">
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+        <div class="row">
+            <h5 id="namepr{{product.id}}">{{product.name}}</h5>
+            <b> Taka. <p id="pricepr{{product.id}}"> {{product.price}} </p> </b>
+            <p>{{product.description}}</p>
+        </div>
+        <div class="row">
+            <span id="divpr{{product.id}}" class="divpr">
+                <a href="{{ product.get_add_to_cart_url }}" id="pr{{product.id}}" class="btn btn-primary cart">
+                    Add To Cart
+                </a>
+                <a href="{{ product.get_remove_from_cart_url }}" id="pr{{product.id}}" class="btn btn-danger cart">Remove from Cart</a>
+            </span>
+        </div>
+    </div>
+
+        <div class="col-md-3">
+
+            {# Product Likes            #}
+            <div class="row">
+
+                <h6> {{ total_likes }} Like </h6>
+
+                <form action="{% url 'like_product' %} " method="POST">
+                    {% csrf_token %}
+                    {% if is_liked %}
+                        <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-danger"> Unlike</button>
+                    {% else %}
+                        <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-primary"> Like</button>
+                    {% endif %}
+                </form>
+
+
+            </div>
+
+            <div class="row">
+        <p>
+          <strong>Product Rating</strong>
+            <form class="rating" method="POST">
+                <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="Rocks!">5 stars</label>
+                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Pretty good">4 stars</label>
+                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Meh">3 stars</label>
+                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="Kinda bad">2 stars</label>
+                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="Sucks big time">1 star</label>
+            </form>
+            <br/> <br/>
+            <p>
+                {{ rating_avg.rating__avg}} Average Rating by {{ rating_avg.rating__count }}  Users.
+
+            </p>
+        </p>
+                </div>
+            <h4 > Leave a comment!! </h4>
+            <form method="POST">
+                {% csrf_token %}
+                {{ comment_form|crispy }}
+                {% if request.user.is_authenticated %}
+                    <input type="submit" value="Submit" class="btn btn-success">
+                {% else %}
+                    <input type="submit" value="Submit" class="btn btn-success" disabled>
+                    <p> Please Login to leave a comment!! </p>
+                {% endif %}
+            </form>
+
+            <div class="row main-comment-section">
+             <h3>Comment section </h3>
+                <div>
+                    <p> {{ comments.count }} Comment{{ comments|pluralize }} </p>
+                </div>
+                <div>
+                {% for comment in comments %}
+                    <blockquote class="blockquote">
+                      <p class="mb-0">{{ comment.content }}</p>
+                      <footer class="blockquote-footer">by <cite title="Source Title"> {{ comment.user.username }} at {{ comment.date_posted }}</cite></footer>
+                    </blockquote>
+                {% endfor %}
+                </div>
+            </div>
+    </div>
+    </div>
+
+
+
+
+
+</div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+
+    <script>
+    $(document).ready(function(){
+
+    $(".rating input[value='{{ my_rating }}']").attr("checked", "checked");
+
+    $(".rating input[type='radio']").click(function(event){
+        // event.preventDefault()
+        var inputValue = $(this).val()
+        console.log(inputValue)
+        var request = $.ajax({
+            method: "POST",
+            url: "{% url 'ajax_rating' %}",
+            data: {
+                product_id: "{{ product.id }}",
+                rating_value: inputValue,
+
+            },
+            encode: true,
+            {#csrftoken: "{{ csrf_token }}"#}
+        })
+
+        {#print({{ csrf_token }})#}
+        request.done(function(data){
+        })
+        request.fail(function(jqXHR, textStatus){
+            if (jqXHR.status == 404) {
+                alert("Page not found!")
+            } else if (jqXHR.status == 401) {
+                alert("You must be logged in to do this.")
+            } else {
+                alert("There was an error with your request. Please try again.")
+            }
+        })
+    })
+
+    })
+
+    </script>
+{% endblock %}

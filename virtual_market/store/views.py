@@ -1,8 +1,22 @@
-from django.shortcuts import render, HttpResponse
-from .models import Product, Category
+from django.shortcuts import render, HttpResponse, redirect
+from .models import Product, Category, ProductRating, ProductComment
+from orders.models import Order, OrderItem
 from accounts.models import Seller
-
+from django.db.models import Q, Avg, Count
+from django.http import Http404, HttpResponse, JsonResponse, HttpResponseRedirect
+import datetime
+from django.contrib.auth.decorators import login_required
+from .forms import ProductForm, ProductUpdateForm, CategoryForm, CommentForm
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
+from django.contrib import messages
+from accounts.decorators import seller_required, customer_required
 from django.contrib.auth import get_user_model
+from virtual_market.mixins import AjaxRequiredMixin
+
+from django.contrib import messages
+
 User = get_user_model()
 
 from django.views.generic import (
@@ -13,23 +27,40 @@ from django.views.generic import (
     DeleteView,
     View
 )
-import datetime
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.decorators import login_required
-from .forms import ProductForm, ProductUpdateForm, CategoryForm
-from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy, reverse
-from django.utils.decorators import method_decorator
-from django.contrib import messages
-from accounts.decorators import seller_required, customer_required
+
 
 # Create your views here.
 
 
 def productView(request, myid):
     # Fetch the product using the id
-    product = Product.objects.filter(id=myid)
-    return render(request, 'store/product_view.html', {'product': product[0]})
+    product = Product.objects.filter(id=myid).first()
+
+    comments = ProductComment.objects.filter(item=product).order_by('-id')
+
+    is_liked = False
+    if product.likes.filter(id=request.user.id).exists():
+        is_liked = True
+
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST or None)
+        if comment_form.is_valid():
+            content = request.POST.get('content')
+            comment = ProductComment.objects.create(item=product, user=request.user, content=content)
+            comment.save()
+
+    else:
+        comment_form = CommentForm()
+
+    context = {
+        'product': product,
+        'comments': comments,
+        'comment_form': comment_form,
+        'is_liked': is_liked,
+        'total_likes': product.total_likes()
+    }
+
+    return render(request, 'store/product_detail.html', context )
 
 
 def store_view(request, username):
@@ -110,7 +141,7 @@ class CategoryDeleteView(DeleteView):
 
 
 @method_decorator([login_required, seller_required], name='dispatch')
-class CategoryListView(ListView):
+class SellerCategoryListView(ListView):
     model = Category
     ordering = ('id', )
     context_object_name = 'category'
@@ -211,10 +242,80 @@ def dashboard(request, username):
 
 @login_required
 @seller_required
-def dashboardProductListView(request):
+def sellerProductListView(request):
 
     product = Product.objects.filter(seller=request.user)
     context = {
                 'product': product,
                 'accounts': request.user}
     return render(request, 'dashboard/product_list.html', context)
+
+
+class ProductRatingAjaxView(AjaxRequiredMixin, View):
+
+    def post(self, request, *args, **kwargs):
+
+        # if request.is_ajax():
+        # raise Http404
+
+        print(self.request)
+        if not request.user.is_authenticated():
+            return JsonResponse({}, status=401)
+        # credit card required **
+
+        print("Hello PR1")
+
+        user = request.user
+        product_id = request.POST.get("product_id")
+        rating_value = request.POST.get("rating_value")
+        exists = Product.objects.filter(id=product_id).exists()
+        if not exists:
+            return JsonResponse({}, status=404)
+
+        try:
+            product_obj = Product.object.get(id=product_id)
+        except:
+            product_obj = Product.objects.filter(id=product_id).first()
+
+        rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
+            user=user,
+            product=product_obj
+        )
+
+        try:
+            rating_obj = ProductRating.objects.get(user=user, product=product_obj)
+        except ProductRating.MultipleObjectsReturned:
+            rating_obj = ProductRating.objects.filter(user=user, product=product_obj).first()
+
+        except:
+            rating_obj = ProductRating()
+            rating_obj.user = user
+            rating_obj.product = product_obj
+
+        rating_obj.rating = int(rating_value)
+        # myproducts = user.myproducts.products.all()
+        # if product_obj in myproducts:
+        #     rating_obj.verified = True
+
+        print(rating_obj.rating)
+        print("Hello PR")
+        rating_obj.save()
+
+        data = {
+            "success": True
+        }
+        return JsonResponse(data)
+
+
+def like_product(request):
+    product = get_object_or_404(Product, id=request.POST.get('product_id'))
+    is_liked = False
+
+    if product.likes.filter(id=request.user.id).exists():
+        product.likes.remove(request.user)
+        is_liked = False
+    else:
+        product.likes.add(request.user)
+        is_liked = True
+
+    return redirect('product_view', kwargs={product.id})

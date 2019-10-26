@@ -1,82 +1,70 @@
-from django.shortcuts import render
-from .models import Order, OrderItem, OrderPlacer, OrderUpdate
-from store.models import Product
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-import json
-# Create your views here.
+from django.shortcuts import redirect
+from store.models import Product, Category, ProductRating, ProductComment
+from .models import Order, OrderItem
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from django.utils import timezone
 
+@login_required
+def add_to_cart(request, myid):
+    item = get_object_or_404(Product, id=myid)
+    order_item, created = OrderItem.objects.get_or_create(
+        item=item,
+        user=request.user,
+        ordered=False
+    )
+    order_qs = Order.objects.filter(user=request.user, ordered=False)
+    print(order_qs)
+    if order_qs.exists():
+        order = order_qs[0]
+        # check if the order item is in the order
 
-def checkout(request):
-    if request.method == "POST":
-        items_json = request.POST.get('itemsJson', '')
-        name = request.POST.get('name', '')
-        email = request.POST.get('email', '')
-        address = request.POST.get('address', '')
-        city = request.POST.get('city', '')
-        zip_code = request.POST.get('zip_code', '')
-        phone = request.POST.get('phone', '')
-
-        order_placer = OrderPlacer(name=name, email=email, address=address, city=city,
-                                   zip_code=zip_code, phone=phone)
-
-        order_placer.save()
-        order = Order(order_placer=order_placer)
-
-        order.save()
-
-        item_data = json.loads(items_json)
-
-        my_list1 = []
-
-        for key in item_data.keys():
-            product_id = key[2:]
-            product = Product.objects.get(id= product_id)
-            quantity = item_data[key][0]
-            my_list1.append(product)
-            order_item = OrderItem(item=product, quantity=quantity, order=order)
+        if order.items.filter(item__id=item.id).exists():
+            order_item.quantity += 1
             order_item.save()
+            messages.info(request, "This item quantity was updated.")
+            return redirect('product_view', myid=item.id)
+        else:
+            order.items.add(order_item)
+            messages.info(request, "This item was added to your cart.")
+            return redirect('product_view', myid=item.id)
+    else:
+        ordered_date = timezone.now()
+        order = Order.objects.create(
+            user=request.user, ordered_date=ordered_date)
+        order.items.add(order_item)
+        messages.info(request, "This item was added to your cart.")
+        return redirect('product_view', myid=item.id)
 
-        update = OrderUpdate(order_id=order.order_id, update_desc="The order has been placed")
-        update.save()
 
-        thank = True
-        id = order.order_id
-        return render(request, 'orders/checkout.html', {'thank': thank, 'id': id})
+@login_required
+def remove_from_cart(request, myid):
+    item = get_object_or_404(Product, id=myid)
+    order_qs = Order.objects.filter(
+        user=request.user,
+        ordered=False
+    )
+    if order_qs.exists():
+        order = order_qs[0]
+        # check if the order item is in the order
+        if order.items.filter(item__id=item.id).exists():
+            order_item = OrderItem.objects.filter(
+                item=item,
+                user=request.user,
+                ordered=False
+            )[0]
+            print(order_item)
 
-    return render(request, 'orders/checkout.html')
-
-
-def tracker(request):
-    if request.method == "POST":
-        orderId = request.POST.get('orderId', '')
-        email = request.POST.get('email', '')
-        
-        try:
-            order_placer=OrderPlacer.objects.filter(email= email)
-            return HttpResponse(f'{order_placer}')
-            order = Order.objects.filter(order_id=orderId)
-
-            if len(order) > 0:
-                update = OrderUpdate.objects.filter(order_id=orderId)
-                updates = []
-                for item in update:
-                    updates.append({'text': item.update_desc, 'time': item.timestamp})
-
-                order_items= OrderItem.objects.filter(order_id= orderId)
-                
-                items=[]  
-                for item in order_items:
-                    item_name= item.item.product_name
-                    item_quantity= item.quantity
-                    items.append({'name': item_name,'quantity': item_quantity })
-                
-                response = json.dumps([updates, items], default=str)
-
-                return HttpResponse(response)
-            else:
-                return HttpResponse('Else{}')
-        except Exception as e:
-            return HttpResponse(f'exception {e}')
-
-    return render(request, 'orders/tracker.html')
+            print(order.items)
+            order.items.remove(order_item)
+            print(order.items)
+            order.save()
+            messages.info(request, "This item was removed from your cart.")
+            return redirect('product_view', myid=item.id)
+        else:
+            messages.info(request, "This item was not in your cart")
+            return redirect('product_view', myid=item.id)
+    else:
+        messages.info(request, "You do not have an active order")
+        return redirect('product_view', myid=item.id)
