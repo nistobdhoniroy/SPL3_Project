@@ -24,17 +24,6 @@
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="Django default" type="feb32156:DbDataSourceImpl" />
       </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="Django default" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="Django default" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
-      </path>
     </expand>
     <select />
   </component>
@@ -44,8 +33,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -112,7 +101,12 @@
       <workItem from="1572063244041" duration="570000" />
       <workItem from="1572063820154" duration="2210000" />
       <workItem from="1572073740674" duration="17100000" />
-      <workItem from="1572096634629" duration="97000" />
+      <workItem from="1572096634629" duration="1277000" />
+      <workItem from="1572098106617" duration="8000" />
+      <workItem from="1572112267359" duration="459000" />
+      <workItem from="1572199984296" duration="3977000" />
+      <workItem from="1572291079004" duration="6265000" />
+      <workItem from="1572328568300" duration="761000" />
     </task>
     <servers />
   </component>

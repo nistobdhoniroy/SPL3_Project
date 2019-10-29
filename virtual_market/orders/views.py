@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
+from django.views.generic import View
+from django.shortcuts import render, get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
+
 
 @login_required
 def add_to_cart(request, myid):
@@ -15,7 +19,7 @@ def add_to_cart(request, myid):
         ordered=False
     )
     order_qs = Order.objects.filter(user=request.user, ordered=False)
-    print(order_qs)
+    #print(order_qs)
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order
@@ -56,10 +60,10 @@ def remove_from_cart(request, myid):
             )[0]
             print(order_item)
 
-            print(order.items)
+            print(order.items.all())
+            #order.items.remove(order_item)
             order.items.remove(order_item)
-            print(order.items)
-            order.save()
+            print(order.items.all())
             messages.info(request, "This item was removed from your cart.")
             return redirect('product_view', myid=item.id)
         else:
@@ -68,3 +72,17 @@ def remove_from_cart(request, myid):
     else:
         messages.info(request, "You do not have an active order")
         return redirect('product_view', myid=item.id)
+
+
+class OrderSummaryView(View):
+    def get(self, *args, **kwargs):
+        try:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            context = {
+                'object': order
+            }
+            return render(self.request, 'orders/order_summary.html', context)
+        except ObjectDoesNotExist:
+            messages.warning(self.request, "You do not have an active order")
+            return redirect("/")
+

@@ -12,7 +12,7 @@ class OrderItem(models.Model):
     ordered = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.item.name
+        return f"{self.quantity} of {self.item.name}"
 
 
 class Order(models.Model):
@@ -24,3 +24,4 @@ class Order(models.Model):
 
     def __str__(self):
         return self.user.username
+
