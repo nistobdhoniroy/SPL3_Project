@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from store.models import Product, Category, ProductRating, ProductComment
+from store.models import Product
 from .models import Order, OrderItem
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.views.generic import View
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from .forms import CheckoutForm
 
 
 @login_required
@@ -19,11 +20,10 @@ def add_to_cart(request, myid):
         ordered=False
     )
     order_qs = Order.objects.filter(user=request.user, ordered=False)
-    #print(order_qs)
+
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order
-
         if order.items.filter(item__id=item.id).exists():
             order_item.quantity += 1
             order_item.save()
@@ -58,12 +58,9 @@ def remove_from_cart(request, myid):
                 user=request.user,
                 ordered=False
             )[0]
-            print(order_item)
 
-            print(order.items.all())
-            #order.items.remove(order_item)
             order.items.remove(order_item)
-            print(order.items.all())
+
             messages.info(request, "This item was removed from your cart.")
             return redirect('product_view', myid=item.id)
         else:
@@ -86,3 +83,85 @@ class OrderSummaryView(View):
             messages.warning(self.request, "You do not have an active order")
             return redirect("/")
 
+
+@login_required
+def remove_single_item_from_cart(request, myid):
+    item = get_object_or_404(Product, id=myid)
+    order_qs = Order.objects.filter(
+        user=request.user,
+        ordered=False
+    )
+    if order_qs.exists():
+        order = order_qs[0]
+        # check if the order item is in the order
+        if order.items.filter(item__id=item.id).exists():
+            order_item = OrderItem.objects.filter(
+                item=item,
+                user=request.user,
+                ordered=False
+            )[0]
+            if order_item.quantity > 1:
+                order_item.quantity -= 1
+                order_item.save()
+            else:
+                order.items.remove(order_item)
+            messages.info(request, "This item quantity was updated.")
+            return redirect("order-summary")
+        else:
+            messages.info(request, "This item was not in your cart")
+            return redirect("product_view", myid=id)
+    else:
+        messages.info(request, "You do not have an active order")
+        return redirect("product_view", myid=id)
+
+@login_required
+def add_single_item_in_cart(request, myid):
+    item = get_object_or_404(Product, id=myid)
+    order_qs = Order.objects.filter(
+        user=request.user,
+        ordered=False
+    )
+    if order_qs.exists():
+        order = order_qs[0]
+        # check if the order item is in the order
+        if order.items.filter(item__id=item.id).exists():
+            order_item = OrderItem.objects.filter(
+                item=item,
+                user=request.user,
+                ordered=False
+            )[0]
+            if order_item.quantity > 0:
+                order_item.quantity += 1
+                order_item.save()
+            else:
+                order.items.add(order_item)
+            messages.info(request, "This item quantity was updated.")
+            return redirect("order-summary")
+        else:
+            messages.info(request, "This item was not in your cart")
+            return redirect("product_view", myid=id)
+    else:
+        messages.info(request, "You do not have an active order")
+        return redirect("product_view", myid=id)
+
+
+class CheckoutView(View):
+    def get(self, request, *args, **kwargs):
+        form = CheckoutForm()
+        context = {
+            'form': form
+        }
+        return render(request, "orders/checkout.html", context)
+
+    def post(self, request,  *args, **kwargs):
+        form = CheckoutForm(request.POST or None)
+        print("The form is post")
+        if form.is_valid():
+            print(form.cleaned_data)
+            # payment = request.POST.get("payment_option")
+            # print(payment)
+            print("The form is valid")
+
+            return redirect('checkout')
+        print("Where I am")
+        return redirect('checkout')
