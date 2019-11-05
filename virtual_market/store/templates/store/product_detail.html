@@ -51,6 +51,101 @@
     top:2px;
     left:2px;
 }
+
+
+
+// Carousel
+
+
+
+/*********************************************
+					VIEW
+*********************************************/
+
+.content-wrapper {
+	max-width: 1140px;
+	background: #fff;
+	margin: 0 auto;
+	margin-top: 25px;
+	margin-bottom: 10px;
+	border: 0px;
+	border-radius: 0px;
+}
+
+.container-fluid{
+	max-width: 1140px;
+	margin: 0 auto;
+}
+
+.view-wrapper {
+	float: right;
+	max-width: 70%;
+	margin-top: 25px;
+}
+
+/*********************************************
+				ITEM
+*********************************************/
+
+.service1-items {
+	padding: 0px 0 0px 0;
+	float: left;
+	position: relative;
+	overflow: hidden;
+	max-width: 100%;
+	height: 321px;
+	width: 130px;
+}
+
+.service1-item {
+	height: 107px;
+	width: 120px;
+	display: block;
+	float: left;
+	position: relative;
+	padding-right: 20px;
+	border-right: 1px solid #DDD;
+	border-top: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
+}
+
+.service1-item > img {
+	max-height: 110px;
+	max-width: 110px;
+	opacity: 0.6;
+	transition: all .2s ease-in;
+	-o-transition: all .2s ease-in;
+	-moz-transition: all .2s ease-in;
+	-webkit-transition: all .2s ease-in;
+}
+
+.service1-item > img:hover {
+	cursor: pointer;
+	opacity: 1;
+}
+
+.service-image-left {
+	padding-right: 50px;
+}
+
+.service-image-right {
+	padding-left: 50px;
+}
+
+.service-image-left > center > img,.service-image-right > center > img{
+	max-height: 155px;
+}
+
+.li-nav{
+    padding-left: 70px;
+    float: right;
+}
+
+.nav-tabs{
+    background: #2f2f1e;
+    font-color: red;
+}
+
 {% endblock %}
 
 
@@ -95,75 +190,137 @@
     </div>
 
         <div class="col-md-3">
+        </div>
 
-            {# Product Likes            #}
-            <div class="row">
 
-                <h6> {{ total_likes }} Like </h6>
+    </div>
+</div>
 
-                <form action="{% url 'like_product' %} " method="POST">
+
+<div class="container">
+
+    <h2> Same Product</h2>
+
+    {% if same_products|length > 0 %}
+    {% for product in same_products %}
+        <div class="col-md-2 product-grid">
+            <div class="image">
+                <a href="{% url 'product_view' product.id %}">
+                    <img src="/media/{{product.image}}" class="w-100">
+
+                </a>
+            </div>
+            <h5 class="text-center">Price:  {{ product.price }} </h5>
+            <h5 class="text-center">Seller: {{ product.seller.username }} </h5>
+{#				<a href="#" class="btn buy ">BUY</a>#}
+        </div>
+
+
+    {% endfor %}
+    {% else%}
+          <h4> No Products Found</h4>
+    {% endif %}
+
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="col-md-12 product-info">
+        <ul id="myTab" class="nav nav-tabs nav_tabs">
+            <li class="active li-nav"><a href="#service-one" data-toggle="tab">DESCRIPTION</a></li>
+            <li class="li-nav"><a href="#service-two" data-toggle="tab">Like- Reviews</a></li>
+            <li class="li-nav"><a href="#service-three" data-toggle="tab">REVIEWS</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="service-one">
+
+                <section class="container product-info">
+                    <h1> {{product.name }} </h1>
+                    <p> {{ product.description }}</p>
+                </section>
+
+            </div>
+            <div class="tab-pane fade" id="service-two">
+
+                <section class="container">
+
+                    <div class="row main-comment-section">
+                        <h6> {{ total_likes }} Like </h6>
+                    </div>
+                    <div class="row main-comment-section">
+                        <form action="{% url 'like_product' %} " method="POST">
+                            {% csrf_token %}
+                            {% if is_liked %}
+                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-danger"> Unlike</button>
+                            {% else %}
+                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-primary"> Like</button>
+                            {% endif %}
+                        </form>
+                    </div>
+
+                    <div class="row main-comment-section">
+                        <strong>Product Rating</strong>
+                    </div>
+
+                    <div class="row main-comment-section">
+                        <form class="rating" method="POST">
+                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="Rocks!">5 stars</label>
+                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Pretty good">4 stars</label>
+                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Meh">3 stars</label>
+                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="Kinda bad">2 stars</label>
+                            <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="Sucks big time">1 star</label>
+                        </form>
+                    </div>
+
+                    <div class="row main-comment-section">
+                        {{ rating_avg.rating__avg}} Average Rating by {{ rating_avg.rating__count }}  Users
+                    </div>
+
+                </section>
+
+            </div>
+
+            <div class="tab-pane fade" id="service-three">
+
+                 <h4 > Leave a comment!! </h4>
+                <form method="POST">
                     {% csrf_token %}
-                    {% if is_liked %}
-                        <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-danger"> Unlike</button>
+                    {{ comment_form|crispy }}
+                    {% if request.user.is_authenticated %}
+                        <input type="submit" value="Submit" class="btn btn-success">
                     {% else %}
-                        <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-primary"> Like</button>
+                        <input type="submit" value="Submit" class="btn btn-success" disabled>
+                        <p> Please Login to leave a comment!! </p>
                     {% endif %}
                 </form>
 
+                <div class="row main-comment-section">
+                    <h3>Comment section </h3>
+                </div>
+
+                <div class="row main-comment-section">
+                     <p> {{ comments.count }} Comment{{ comments|pluralize }} </p>
+                </div>
+
+                <div class="row main-comment-section">
+                    <div class="col-sm-12">
+                    {% for comment in comments %}
+                        <blockquote class="blockquote">
+                          <p class="mb-0">{{ comment.content }}</p>
+                          <footer class="blockquote-footer">by <cite title="Source Title"> {{ comment.user.username }} at {{ comment.date_posted }}</cite></footer>
+                        </blockquote>
+                    {% endfor %}
+                    </div>
+                </div>
 
             </div>
-
-            <div class="row">
-        <p>
-          <strong>Product Rating</strong>
-            <form class="rating" method="POST">
-                <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="Rocks!">5 stars</label>
-                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Pretty good">4 stars</label>
-                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Meh">3 stars</label>
-                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="Kinda bad">2 stars</label>
-                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="Sucks big time">1 star</label>
-            </form>
-            <br/> <br/>
-            <p>
-                {{ rating_avg.rating__avg}} Average Rating by {{ rating_avg.rating__count }}  Users.
-
-            </p>
-        </p>
-                </div>
-            <h4 > Leave a comment!! </h4>
-            <form method="POST">
-                {% csrf_token %}
-                {{ comment_form|crispy }}
-                {% if request.user.is_authenticated %}
-                    <input type="submit" value="Submit" class="btn btn-success">
-                {% else %}
-                    <input type="submit" value="Submit" class="btn btn-success" disabled>
-                    <p> Please Login to leave a comment!! </p>
-                {% endif %}
-            </form>
-
-            <div class="row main-comment-section">
-             <h3>Comment section </h3>
-                <div>
-                    <p> {{ comments.count }} Comment{{ comments|pluralize }} </p>
-                </div>
-                <div>
-                {% for comment in comments %}
-                    <blockquote class="blockquote">
-                      <p class="mb-0">{{ comment.content }}</p>
-                      <footer class="blockquote-footer">by <cite title="Source Title"> {{ comment.user.username }} at {{ comment.date_posted }}</cite></footer>
-                    </blockquote>
-                {% endfor %}
-                </div>
-            </div>
+        </div>
+        <hr>
     </div>
-    </div>
-
-
-
-
-
 </div>
+
+
 
 
 

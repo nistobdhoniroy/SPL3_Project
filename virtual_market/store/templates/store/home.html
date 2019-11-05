@@ -93,15 +93,15 @@ img.w-100{
         {% for seller in sellers %}
 			<div class="col-md-4 product-grid">
 				<div class="image">
-					<a href="{% url 'store_view' seller.username %}">
-						<img src="/media/{{seller.profile.store_logo}}" class="w-100">
+					<a href="{% url 'store_view' seller.user.username %}">
+						<img src="/media/{{seller.store_logo}}" class="w-100">
 						<div class="overlay">
 							<div class="detail">View Store</div>
 						</div>
 					</a>
 				</div>
-				<h5 class="text-center">Store: {{ seller.profile.store_name|title}} </h5>
-				<h5 class="text-center">Seller: {{ seller.username|capfirst}} </h5>
+				<h5 class="text-center">Store: {{ seller.store_name|title}} </h5>
+				<h5 class="text-center">Seller: {{ seller.user.username|capfirst}} </h5>
 {#				<a href="#" class="btn buy ">BUY</a>#}
 			</div>
 

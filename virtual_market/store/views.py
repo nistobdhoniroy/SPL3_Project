@@ -10,11 +10,11 @@ from .forms import ProductForm, ProductUpdateForm, CategoryForm, CommentForm
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
-from django.contrib import messages
 from accounts.decorators import seller_required, customer_required
 from django.contrib.auth import get_user_model
 from virtual_market.mixins import AjaxRequiredMixin
-
+from accounts.models import Seller
+from .custom_functions import test_it
 from django.contrib import messages
 
 User = get_user_model()
@@ -52,12 +52,19 @@ def productView(request, myid):
     else:
         comment_form = CommentForm()
 
+    same_products = Product.objects.filter(name=product.name).exclude(id=myid)
+
+    test_same_products = test_it(product.name, product.id)
+
+    # print(type(test_same_products))
+
     context = {
         'product': product,
         'comments': comments,
         'comment_form': comment_form,
         'is_liked': is_liked,
-        'total_likes': product.total_likes()
+        'total_likes': product.total_likes(),
+        'same_products': test_same_products
     }
 
     return render(request, 'store/product_detail.html', context )
@@ -73,7 +80,8 @@ def store_view(request, username):
 
 
 def home_view(request):
-    sellers = User.objects.all().exclude(is_superuser=True)
+    #sellers = User.objects.all().exclude(is_superuser=True)
+    sellers = Seller.objects.all()
     return render(request, 'store/home.html', {'sellers': sellers})
 
 
@@ -319,3 +327,4 @@ def like_product(request):
         is_liked = True
 
     return redirect('product_view', kwargs={product.id})
+

@@ -7,19 +7,22 @@ PAYMENT_CHOICES = (
 
 
 class CheckoutForm(forms.Form):
-    shipping_address = forms.CharField(required=False)
-    shipping_address2 = forms.CharField(required=False)
-    shipping_zip = forms.CharField(required=False)
+    street_address = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder': 'Street Address',
+        "id": 'address'
+    }))
+    apartment_address = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder': 'Apartment Address',
+        "id": 'address-2'
+    }))
 
-    billing_address = forms.CharField(required=False)
-    billing_address2 = forms.CharField(required=False)
-    billing_zip = forms.CharField(required=False)
+    zip = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        "id": 'zip'
+    }))
 
-    same_billing_address = forms.BooleanField(required=False)
-    set_default_shipping = forms.BooleanField(required=False)
-    use_default_shipping = forms.BooleanField(required=False)
-    set_default_billing = forms.BooleanField(required=False)
-    use_default_billing = forms.BooleanField(required=False)
+    same_billing_address = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+    save_info = forms.BooleanField(required=False, widget=forms.CheckboxInput())
 
     payment_option = forms.ChoiceField(
         widget=forms.RadioSelect, choices=PAYMENT_CHOICES)
