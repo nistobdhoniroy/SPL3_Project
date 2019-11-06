@@ -14,7 +14,7 @@ from accounts.decorators import seller_required, customer_required
 from django.contrib.auth import get_user_model
 from virtual_market.mixins import AjaxRequiredMixin
 from accounts.models import Seller
-from .custom_functions import test_it
+from .custom_functions import get_similar_products
 from django.contrib import messages
 
 User = get_user_model()
@@ -52,9 +52,9 @@ def productView(request, myid):
     else:
         comment_form = CommentForm()
 
-    same_products = Product.objects.filter(name=product.name).exclude(id=myid)
+    #same_products = Product.objects.filter(name=product.name).exclude(id=myid)
 
-    test_same_products = test_it(product.name, product.id)
+    same_products = get_similar_products(product.name, product.id)
 
     # print(type(test_same_products))
 
@@ -64,7 +64,7 @@ def productView(request, myid):
         'comment_form': comment_form,
         'is_liked': is_liked,
         'total_likes': product.total_likes(),
-        'same_products': test_same_products
+        'same_products': same_products
     }
 
     return render(request, 'store/product_detail.html', context )
