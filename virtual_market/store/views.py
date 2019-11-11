@@ -16,6 +16,10 @@ from virtual_market.mixins import AjaxRequiredMixin
 from accounts.models import Seller
 from .custom_functions import get_similar_products
 from django.contrib import messages
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+
 
 User = get_user_model()
 
@@ -25,7 +29,8 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
-    View
+    View,
+    RedirectView
 )
 
 
@@ -286,15 +291,14 @@ class ProductRatingAjaxView(AjaxRequiredMixin, View):
             product_obj = Product.objects.filter(id=product_id).first()
 
         rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
-            user=user,
-            product=product_obj
+            user_id=user,
+            product_id=product_obj
         )
 
         try:
             rating_obj = ProductRating.objects.get(user=user, product=product_obj)
         except ProductRating.MultipleObjectsReturned:
             rating_obj = ProductRating.objects.filter(user=user, product=product_obj).first()
-
         except:
             rating_obj = ProductRating()
             rating_obj.user = user
@@ -315,16 +319,64 @@ class ProductRatingAjaxView(AjaxRequiredMixin, View):
         return JsonResponse(data)
 
 
-def like_product(request):
-    product = get_object_or_404(Product, id=request.POST.get('product_id'))
-    is_liked = False
+# def like_product(request):
+#     product = get_object_or_404(Product, id=request.POST.get('product_id'))
+#     is_liked = False
+#
+#     if product.likes.filter(id=request.user.id).exists():
+#         product.likes.remove(request.user)
+#         is_liked = False
+#     else:
+#         product.likes.add(request.user)
+#         is_liked = True
+#
+#     return redirect('product_view', kwargs={product.id})
 
-    if product.likes.filter(id=request.user.id).exists():
-        product.likes.remove(request.user)
-        is_liked = False
-    else:
-        product.likes.add(request.user)
-        is_liked = True
 
-    return redirect('product_view', kwargs={product.id})
+# class ProductLikeToggle(RedirectView):
+#     def get_redirect_url(self, *args, **kwargs):
+#         p_id = self.kwargs.get("myid")
+#         # print('Hello: ',p_id)
+#         prod = get_object_or_404(Product, id=p_id)
+#
+#         url_ = prod.get_redirect_url()
+#         user = self.request.user
+#
+#         if user.is_authenticated:
+#             if user in prod.likes.all():
+#                 prod.likes.remove(user)
+#             else:
+#                 prod.likes.add(user)
+#
+#         # print(prod)
+#         return url_
+
+
+class ProductAPILikeToggle(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request,  myid, format=None):
+        prod = get_object_or_404(Product, id=myid)
+        url_ = prod.get_redirect_url()
+
+        user = self.request.user
+        updated = False
+        liked = False
+
+        if user.is_authenticated:
+            if user in prod.likes.all():
+                liked = False
+                prod.likes.remove(user)
+            else:
+                liked = True
+                prod.likes.add(user)
+            updated = True
+        data = {
+            "updated": updated,
+            "liked": liked
+        }
+        return Response(data)
+
+
 

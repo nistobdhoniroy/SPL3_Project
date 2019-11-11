@@ -176,7 +176,10 @@
     <div class="col-md-6">
         <div class="row">
             <h5 id="namepr{{product.id}}">{{product.name}}</h5>
-            <b> Taka. <p id="pricepr{{product.id}}"> {{product.price}} </p> </b>
+
+        </div>
+        <div class="row">
+            <b> <p id="pricepr{{product.id}}">  Taka. {{product.price}} </p> </b>
             <p>{{product.description}}</p>
         </div>
         <div class="row">
@@ -199,7 +202,7 @@
 
 <div class="container">
 
-    <h2> Same Product</h2>
+    <h3> Same Product at other stores</h3>
 
     {% if same_products|length > 0 %}
     {% for product in same_products %}
@@ -210,7 +213,8 @@
 
                 </a>
             </div>
-            <h5 class="text-center">Price:  {{ product.price }} </h5>
+            <h5 class="text-center"> {{ product.name }} </h5>
+            <h5 class="text-center">Taka.  {{ product.price }} </h5>
             <h5 class="text-center">Seller: {{ product.seller.username }} </h5>
 {#				<a href="#" class="btn buy ">BUY</a>#}
         </div>
@@ -229,7 +233,7 @@
     <div class="col-md-12 product-info">
         <ul id="myTab" class="nav nav-tabs nav_tabs">
             <li class="active li-nav"><a href="#service-one" data-toggle="tab">DESCRIPTION</a></li>
-            <li class="li-nav"><a href="#service-two" data-toggle="tab">Like- Reviews</a></li>
+            <li class="li-nav"><a href="#service-two" data-toggle="tab">Like- Ratings</a></li>
             <li class="li-nav"><a href="#service-three" data-toggle="tab">REVIEWS</a></li>
         </ul>
         <div id="myTabContent" class="tab-content">
@@ -246,17 +250,22 @@
                 <section class="container">
 
                     <div class="row main-comment-section">
-                        <h6> {{ total_likes }} Like </h6>
+                        <h6> {{ total_likes }} Likes </h6>
                     </div>
                     <div class="row main-comment-section">
-                        <form action="{% url 'like_product' %} " method="POST">
-                            {% csrf_token %}
-                            {% if is_liked %}
-                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-danger"> Unlike</button>
-                            {% else %}
-                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-primary"> Like</button>
-                            {% endif %}
-                        </form>
+
+{#                        <a href="{{ product.get_like_url }}">#}
+{#                            {% if is_liked %}#}
+{#                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-danger"> Unlike</button>#}
+{#                            {% else %}#}
+{#                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-primary"> Like</button>#}
+{#                            {% endif %}#}
+{#                        </a>#}
+
+                    <p> <a class='like-btn' data-href='{{ product.get_api_like_url }}' href='{{ product.get_like_url }}'>
+                        {{ product.likes.count }} Like </a>
+                    </p>
+
                     </div>
 
                     <div class="row main-comment-section">
@@ -332,37 +341,38 @@
     <script>
     $(document).ready(function(){
 
-    $(".rating input[value='{{ my_rating }}']").attr("checked", "checked");
 
-    $(".rating input[type='radio']").click(function(event){
-        // event.preventDefault()
-        var inputValue = $(this).val()
-        console.log(inputValue)
-        var request = $.ajax({
-            method: "POST",
-            url: "{% url 'ajax_rating' %}",
-            data: {
-                product_id: "{{ product.id }}",
-                rating_value: inputValue,
+        $(".rating input[value='{{ my_rating }}']").attr("checked", "checked");
 
-            },
-            encode: true,
-            {#csrftoken: "{{ csrf_token }}"#}
-        })
+        $(".rating input[type='radio']").click(function(event){
+            // event.preventDefault()
+            var inputValue = $(this).val()
+            console.log(inputValue)
+            var request = $.ajax({
+                method: "POST",
+                url: "{% url 'ajax_rating' %}",
+                data: {
+                    product_id: "{{ product.id }}",
+                    rating_value: inputValue,
 
-        {#print({{ csrf_token }})#}
-        request.done(function(data){
+                },
+                encode: true,
+                {#csrftoken: "{{ csrf_token }}"#}
+            })
+
+            {#print({{ csrf_token }})#}
+            request.done(function(data){
+            })
+            request.fail(function(jqXHR, textStatus){
+                if (jqXHR.status == 404) {
+                    alert("Page not found!")
+                } else if (jqXHR.status == 401) {
+                    alert("You must be logged in to do this.")
+                } else {
+                    alert("There was an error with your request. Please try again.")
+                }
+            })
         })
-        request.fail(function(jqXHR, textStatus){
-            if (jqXHR.status == 404) {
-                alert("Page not found!")
-            } else if (jqXHR.status == 401) {
-                alert("You must be logged in to do this.")
-            } else {
-                alert("There was an error with your request. Please try again.")
-            }
-        })
-    })
 
     })
 

@@ -103,6 +103,8 @@
 
   {% block content %} {% endblock %}
 
+
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.js"
@@ -111,5 +113,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     {% block js %} {% endblock %}
+
+    <script>
+    $(document).ready(function(){
+        function updateText(btn, newCount, verb) {
+            btn.text(newCount + " " + verb)
+        }
+
+        $(".like-btn").click(function (e) {
+            e.preventDefault()
+            var this_ = $(this)
+            var likeUrl = this_.attr("data-href")
+            var likeCount = parseInt(this_.attr("data-likes"))|0
+            var addLike = likeCount + 1
+            var removeLike = likeCount - 1
+
+            if(likeUrl){
+                $.ajax({
+                url: likeUrl,
+                method: "GET",
+                data: {},
+                success: function (data) {
+                    var newLikes;
+                    if (data.liked) {
+                        updateText(this_, addLike, "Unlike")
+                    } else {
+                        updateText(this_, removeLike, "Like")
+                    }
+                    console.log(data)
+                }, error: function (error) {
+                    console.log(error)
+                    console.log("error")
+                }
+                })
+
+            }
+
+
+
+        })
+
+    })
+    </script>
+
   </body>
 </html>

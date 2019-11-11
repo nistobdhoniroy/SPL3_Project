@@ -8,7 +8,9 @@ urlpatterns = [
     path('<str:username>', views.store_view, name='store_view'),
     path('product/<int:myid>', views.productView, name='product_view'),
     url(r'^ajax/rating/$', views.ProductRatingAjaxView.as_view(), name='ajax_rating'),
-    url(r'^like/$', views.like_product, name='like_product'),
+    # url(r'^like/$', views.like_product, name='like_product'),
+    # path('product/<int:myid>/like', views.ProductLikeToggle.as_view(), name='like_product'),
+    path('product/<int:myid>/like', views.ProductAPILikeToggle.as_view(), name='like_product'),
 
     # seller
     path('product/new', views.ProductAddView.as_view(), name='add-product'),
