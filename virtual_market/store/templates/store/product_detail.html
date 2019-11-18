@@ -249,21 +249,15 @@
 
                 <section class="container">
 
-                    <div class="row main-comment-section">
+                    <div class="row main-comment-section total-like-btn">
                         <h6> {{ total_likes }} Likes </h6>
                     </div>
                     <div class="row main-comment-section">
-
-{#                        <a href="{{ product.get_like_url }}">#}
-{#                            {% if is_liked %}#}
-{#                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-danger"> Unlike</button>#}
-{#                            {% else %}#}
-{#                                <button type="submit" name="product_id" value="{{ product.id }}" class="btn btn-primary"> Like</button>#}
-{#                            {% endif %}#}
-{#                        </a>#}
-
-                    <p> <a class='like-btn' data-href='{{ product.get_api_like_url }}' href='{{ product.get_like_url }}'>
-                        {{ product.likes.count }} Like </a>
+                    <p>
+                        <button class="btn btn-danger">
+                        <a class='like-btn' data-href='{{ product.get_api_like_url }}' data-likes='{{ product.likes.count }}'
+                           href='{{ product.get_like_url }}'> Like </a>
+                        </button>
                     </p>
 
                     </div>
@@ -274,6 +268,7 @@
 
                     <div class="row main-comment-section">
                         <form class="rating" method="POST">
+                            {% csrf_token %}
                             <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="Rocks!">5 stars</label>
                             <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Pretty good">4 stars</label>
                             <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Meh">3 stars</label>
@@ -340,33 +335,34 @@
 
     <script>
     $(document).ready(function(){
-
-
         $(".rating input[value='{{ my_rating }}']").attr("checked", "checked");
 
         $(".rating input[type='radio']").click(function(event){
             // event.preventDefault()
-            var inputValue = $(this).val()
-            console.log(inputValue)
+            var inputValue = $(this).val();
+            console.log(inputValue);
+
             var request = $.ajax({
                 method: "POST",
                 url: "{% url 'ajax_rating' %}",
-                data: {
-                    product_id: "{{ product.id }}",
+                contentType:'application/json',
+                dataType: 'json',
+                data: JSON.stringify({
+                    product_id: "abc",
                     rating_value: inputValue,
-
-                },
-                encode: true,
-                {#csrftoken: "{{ csrf_token }}"#}
+                    csrfmiddlewaretoken : '{{ csrf_token }}'
+                }),
+                encode: true
             })
 
             {#print({{ csrf_token }})#}
             request.done(function(data){
             })
+
             request.fail(function(jqXHR, textStatus){
-                if (jqXHR.status == 404) {
+                if (jqXHR.status === 404) {
                     alert("Page not found!")
-                } else if (jqXHR.status == 401) {
+                } else if (jqXHR.status === 401) {
                     alert("You must be logged in to do this.")
                 } else {
                     alert("There was an error with your request. Please try again.")

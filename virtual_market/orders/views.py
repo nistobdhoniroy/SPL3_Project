@@ -76,17 +76,54 @@ def remove_from_cart(request, myid):
         return redirect('product_view', myid=item.id)
 
 
+# class OrderSummaryView(View):
+#     def get(self, *args, **kwargs):
+#         try:
+#             order = Order.objects.get(user=self.request.user, ordered=False)
+#             context = {
+#                 'object': order
+#             }
+#             return render(self.request, 'orders/order_summary.html', context)
+#         except ObjectDoesNotExist:
+#             messages.warning(self.request, "You do not have an active order")
+#             return redirect("/")
+
 class OrderSummaryView(View):
     def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
+
+            order_total = order.get_total()
+            print(order_total)
+
+            seller_list = set()
+            for items in order.items.all():
+                seller_list.add(items.item.seller)
+
+            # print(order.items.all())
+
+            order_list = {}
+            price_list = {}
+            for single_seller in seller_list:
+                # print(single_seller)
+                product_order_list = []
+                total_seller_price = 0
+                for items in order.items.all():
+                    if items.item.seller == single_seller:
+                        print(items)
+                        total_seller_price += items.item.price * items.quantity
+                        product_order_list.append(items)
+                price_list.append()
+                order_list[single_seller] = product_order_list
+
             context = {
-                'object': order
+                'object': order_list,
+                'order_total': order_total
             }
             return render(self.request, 'orders/order_summary.html', context)
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
-            return redirect("/")
+            return redirect("home_view")
 
 
 @login_required
@@ -266,6 +303,5 @@ class PaymentView(View):
 
         messages.warning(self.request, "Invalid data received")
         return redirect("/payment/stripe/")
-
 
 

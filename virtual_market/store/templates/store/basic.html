@@ -1,4 +1,5 @@
 {% load cart_template_tags %}
+{% load staticfiles %}
 
 <!doctype html>
 <html lang="en">
@@ -112,19 +113,33 @@
   crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <script src="{% static 'js/req_ajax_setup.js' %}"></script>
+
+
+
     {% block js %} {% endblock %}
 
     <script>
     $(document).ready(function(){
         function updateText(btn, newCount, verb) {
-            btn.text(newCount + " " + verb)
+            {#btn.text(newCount + " " + verb)#}
+            btn.text(verb)
+            btn.attr("data-likes",newCount)
         }
 
         $(".like-btn").click(function (e) {
             e.preventDefault()
             var this_ = $(this)
             var likeUrl = this_.attr("data-href")
+            var abc = this_.text()
+            {#console.log(abc)#}
+
             var likeCount = parseInt(this_.attr("data-likes"))|0
+
+            {#console.log("Likes are:")#}
+            {#console.log(likeCount)#}
+
             var addLike = likeCount + 1
             var removeLike = likeCount - 1
 
@@ -134,11 +149,12 @@
                 method: "GET",
                 data: {},
                 success: function (data) {
-                    var newLikes;
                     if (data.liked) {
                         updateText(this_, addLike, "Unlike")
+                        $(".total-like-btn").html( addLike+ " Likes")
                     } else {
-                        updateText(this_, removeLike, "Like")
+                        updateText(this_, removeLike, " Like")
+                        $(".total-like-btn").html( removeLike+" Likes")
                     }
                     console.log(data)
                 }, error: function (error) {
@@ -148,11 +164,7 @@
                 })
 
             }
-
-
-
         })
-
     })
     </script>
 

@@ -1,9 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from .models import Product, Category, ProductRating, ProductComment
-from orders.models import Order, OrderItem
-from accounts.models import Seller
-from django.db.models import Q, Avg, Count
-from django.http import Http404, HttpResponse, JsonResponse, HttpResponseRedirect
+
+from django.http import JsonResponse
 import datetime
 from django.contrib.auth.decorators import login_required
 from .forms import ProductForm, ProductUpdateForm, CategoryForm, CommentForm
@@ -264,92 +262,66 @@ def sellerProductListView(request):
     return render(request, 'dashboard/product_list.html', context)
 
 
-class ProductRatingAjaxView(AjaxRequiredMixin, View):
+class ProductRatingAjaxView(View):
 
-    def post(self, request, *args, **kwargs):
-
+    def post(self, *args, **kwargs):
         # if request.is_ajax():
         # raise Http404
 
-        print(self.request)
-        if not request.user.is_authenticated():
-            return JsonResponse({}, status=401)
+        print("Hello I am in ")
+        print(self.request.user)
+        # if not self.request.user.is_authenticated():
+        #     return JsonResponse({}, status=401)
         # credit card required **
+        print("I am ok")
 
-        print("Hello PR1")
-
-        user = request.user
-        product_id = request.POST.get("product_id")
-        rating_value = request.POST.get("rating_value")
-        exists = Product.objects.filter(id=product_id).exists()
-        if not exists:
-            return JsonResponse({}, status=404)
-
-        try:
-            product_obj = Product.object.get(id=product_id)
-        except:
-            product_obj = Product.objects.filter(id=product_id).first()
-
-        rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
-            user_id=user,
-            product_id=product_obj
-        )
-
-        try:
-            rating_obj = ProductRating.objects.get(user=user, product=product_obj)
-        except ProductRating.MultipleObjectsReturned:
-            rating_obj = ProductRating.objects.filter(user=user, product=product_obj).first()
-        except:
-            rating_obj = ProductRating()
-            rating_obj.user = user
-            rating_obj.product = product_obj
-
-        rating_obj.rating = int(rating_value)
-        # myproducts = user.myproducts.products.all()
-        # if product_obj in myproducts:
-        #     rating_obj.verified = True
-
-        print(rating_obj.rating)
-        print("Hello PR")
-        rating_obj.save()
-
+        # print("Hello PR1")
+        #
+        user = self.request.user
+        product_id = self.request.POST.get("product_id")
+        rating_value = self.request.POST.get("rating_value")
+        # rating_value = self.request.POST['rating_value']
+        #
+        print(user, " Prod ", product_id, " Rating: ", rating_value)
+        # print("I am here", product_id)
+        # exists = Product.objects.filter(id=product_id).exists()
+        # if not exists:
+        #     return JsonResponse({}, status=404)
+        #
+        # try:
+        #     product_obj = Product.objects.get(id=product_id)
+        # except:
+        #     product_obj = Product.objects.filter(id=product_id).first()
+        #
+        # print("Under Product Object ")
+        #
+        # # rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
+        # #     user=user,
+        # #     product=product_obj
+        # # )
+        #
+        # try:
+        #     rating_obj = ProductRating.objects.get(user=user, product=product_obj)
+        # except ProductRating.MultipleObjectsReturned:
+        #     rating_obj = ProductRating.objects.filter(user=user, product=product_obj).first()
+        # except:
+        #     rating_obj = ProductRating()
+        #     rating_obj.user = user
+        #     rating_obj.product = product_obj
+        #
+        # rating_obj.rating = int(rating_value)
+        # # myproducts = user.myproducts.products.all()
+        # # if product_obj in myproducts:
+        # #     rating_obj.verified = True
+        #
+        # print(rating_obj.rating)
+        # print("Hello PR")
+        # rating_obj.save()
+        #
         data = {
             "success": True
         }
         return JsonResponse(data)
-
-
-# def like_product(request):
-#     product = get_object_or_404(Product, id=request.POST.get('product_id'))
-#     is_liked = False
-#
-#     if product.likes.filter(id=request.user.id).exists():
-#         product.likes.remove(request.user)
-#         is_liked = False
-#     else:
-#         product.likes.add(request.user)
-#         is_liked = True
-#
-#     return redirect('product_view', kwargs={product.id})
-
-
-# class ProductLikeToggle(RedirectView):
-#     def get_redirect_url(self, *args, **kwargs):
-#         p_id = self.kwargs.get("myid")
-#         # print('Hello: ',p_id)
-#         prod = get_object_or_404(Product, id=p_id)
-#
-#         url_ = prod.get_redirect_url()
-#         user = self.request.user
-#
-#         if user.is_authenticated:
-#             if user in prod.likes.all():
-#                 prod.likes.remove(user)
-#             else:
-#                 prod.likes.add(user)
-#
-#         # print(prod)
-#         return url_
 
 
 class ProductAPILikeToggle(APIView):

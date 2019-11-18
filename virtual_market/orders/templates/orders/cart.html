@@ -1,20 +1,18 @@
 {% extends "store/basic.html" %}
 
-{% block title %} VM Cart {% endblock %}
+{% block title %} Order Summary {% endblock %}
 
 
 {% block content %}
   <main>
     <div class="container">
 
-
     <div class="table-responsive text-nowrap">
     <h2>Cart </h2>
 
-        Order Total: Taka {{ order_total }}
-        <br>
         {% for key, value in object.items %}
             <h3> {{ key }} </h3>
+
             <table class="table">
                 <thead>
                     <tr>
@@ -27,30 +25,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for order_item in value  %}
-                    <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ order_item.item.name }}</td>
-                    <td>{{ order_item.item.price }}</td>
-                    <td>
-                        <a href="{% url 'remove-single-item-from-cart' order_item.item.id %}"><i class="fas fa-minus mr-2"></i></a>
-                        {{ order_item.quantity }}
-                        <a href="{% url 'add-single-item-in-cart' order_item.item.id %}"><i class="fas fa-plus ml-2"> </i></a>
-                    </td>
-                    <td>
-                        <a href="{% url 'store_view' order_item.item.seller.username  %}">
-                            {{ order_item.item.seller.username }}
+
+                        {% for order_item in value  %}
+                        <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ order_item.item.name }}</td>
+                        <td>{{ order_item.item.price }}</td>
+                        <td>
+                            <a href="{% url 'remove-single-item-from-cart' order_item.item.id %}"><i class="fas fa-minus mr-2"></i></a>
+                            {{ order_item.quantity }}
+                            <a href="{% url 'add-single-item-in-cart' order_item.item.id %}"><i class="fas fa-plus ml-2"> </i></a>
+                        </td>
+                        <td>
+                            <a href="{% url 'store_view' order_item.item.seller.username  %}">
+                                {{ order_item.item.seller.username }}
+                            </a>
+                        </td>
+                        <td>
+                            Taka. {{ order_item.get_total_item_price }}
+                        <a style='color: red;' href="{% url 'remove-from-cart' order_item.item.id %}">
+                            <i class="fas fa-trash float-right"></i>
                         </a>
-                    </td>
-                    <td>
-                        Taka. {{ order_item.get_total_item_price }}
-                    <a style='color: red;' href="{% url 'remove-from-cart' order_item.item.id %}">
-                        <i class="fas fa-trash float-right"></i>
-                    </a>
-                    </td>
-                     </tr>
-                    {% endfor %}
+                        </td>
+                         </tr>
+                        {% endfor %}
+
                  </tbody>
+
             </table>
 
             {% empty %}
@@ -61,6 +62,7 @@
 
         {% endfor %}
 
+
         {% if object|length > 0 %}
         <tr>
             <td colspan="5">
@@ -70,9 +72,13 @@
         </tr>
         {% endif %}
 
+
     </div>
+
     </div>
   </main>
+
+
 
 {% endblock content %}
 
