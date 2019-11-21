@@ -1,0 +1,81 @@
+{% extends 'dashboard/dashboard.html' %}
+{% load crispy_forms_tags %}
+
+{% block main %}
+    <div class="row">
+         <div class="col-sm-10">
+             <h1> {{accounts.username}}</h1>
+         </div>
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+            <th scope="col">Invoice Id</th>
+            <th scope="col">Cart Id</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Seller</th>
+            <th scope="col">Status</th>
+            <th scope="col">Date</th>
+            <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if order_to_seller.count > 0 %}
+            {% for pr in order_to_seller %}
+                <tr>
+                    <th scope="row">{{ pr.id}}</th>
+                    <td>{{ pr.order.id }}</td>
+                    <td>{{ pr.amount }}</td>
+                    <td>{{ pr.customer }}</td>
+                    <td>{{ pr.seller }}</td>
+
+                    <td>
+                        {% if pr.status == 'P' %} Pending
+                        {% elif  pr.status == 'A' %} Accepted
+                        {% elif  pr.status == 'R' %} Rejected
+                        {% elif  pr.status == 'S' %} Shipped
+                        {% endif %}
+                    </td>
+
+                    <td> {{ pr.ordered_date }}</td>
+
+                     <td>
+                        <a href="{% url 'process-order'  pr.id %}">
+                            <button type="button" class="btn btn-primary">Process Order </button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+
+      </tbody>
+    </table>
+
+    {% if is_paginated %}
+        <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info mb-4" href="?page=1"> &laquo;First </a>
+             <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif%}
+
+       {% for num in  page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}"> {{num}} </a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}"> {{num}} </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+        </span>
+    {% endif %}
+
+{% endblock %}
+
+
+

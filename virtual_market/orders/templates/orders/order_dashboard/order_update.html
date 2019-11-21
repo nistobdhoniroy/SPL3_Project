@@ -1,0 +1,75 @@
+{% extends 'dashboard/dashboard.html' %}
+{% load crispy_forms_tags %}
+
+{% block main%}
+
+    <br>
+    <h3 class="media-middle">Invoice: {{ order_to_seller.id}} </h3>
+    <div class="content-section">
+
+        <h3> Order Details: </h3>
+        <table  class="table table-striped">
+            <thead>
+                 <tr>
+                    <th scope="col">Invoice Id</th>
+                    <th scope="col">Cart Id</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Seller</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Order Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                 <tr>
+                    <th scope="row">{{ order_to_seller.id}}</th>
+                    <td>{{ order_to_seller.order.id }}</td>
+                    <td>{{ order_to_seller.amount }}</td>
+                    <td>{{ order_to_seller.customer }}</td>
+                    <td>{{ order_to_seller.seller }}</td>
+                    <td>{{ order_to_seller.status }}</td>
+                    <td>{{ order_to_seller.ordered_date }}</td>
+                 </tr>
+            </tbody>
+        </table>
+
+        <h3> Item Details: </h3>
+        <table  class="table table-striped">
+
+            <thead>
+                 <tr>
+                    <th scope="col">Item Name</th>
+                     <th scope="col">Unit Price</th>
+                    <th scope="col">Quantity</th>
+
+                </tr>
+            </thead>
+            <tbody>
+               {% for item in order_items %}
+                 <tr>
+                    <th scope="row">{{ item.item.name}}</th>
+                     <th scope="row">{{ item.item.price}}</th>
+                    <td>{{ item.quantity }}</td>
+
+                 </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Process Order </legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit" onclick="submit()">Update Status </button>
+            </div>
+            {{ form.non_field_errors }}
+        </form>
+    </div>
+
+{% endblock %}

@@ -33,9 +33,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
-        <option value="Python Script" />
         <option value="JavaScript File" />
+        <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -45,16 +45,17 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/orders/templates/orders" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\orders\templates\orders" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\statics\js" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\store\templates\store" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\store\statics\js" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\orders\templates\orders" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -171,7 +172,17 @@
       <workItem from="1573726653572" duration="6232000" />
       <workItem from="1573740241189" duration="2250000" />
       <workItem from="1573809322314" duration="2666000" />
-      <workItem from="1574047894800" duration="16987000" />
+      <workItem from="1574047894800" duration="20131000" />
+      <workItem from="1574163137945" duration="3796000" />
+      <workItem from="1574171103760" duration="3245000" />
+      <workItem from="1574185726012" duration="6522000" />
+      <workItem from="1574226686326" duration="109000" />
+      <workItem from="1574226799373" duration="15098000" />
+      <workItem from="1574269640625" duration="83000" />
+      <workItem from="1574269732963" duration="8027000" />
+      <workItem from="1574314088139" duration="144000" />
+      <workItem from="1574314240676" duration="13621000" />
+      <workItem from="1574336617454" duration="9711000" />
     </task>
     <servers />
   </component>

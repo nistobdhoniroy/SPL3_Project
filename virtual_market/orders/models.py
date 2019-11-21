@@ -1,6 +1,7 @@
 from django.db import models
 from store.models import Product
 from django.conf import settings
+from accounts.models import User
 
 # Create your models here.
 
@@ -60,3 +61,24 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class OrderToSellers(models.Model):
+    STATUS_CHOICES = (
+        ('P', 'Pending'),
+        ('A', 'Accepted'),
+        ('R', 'Rejected'),
+        ('S', 'Shipped'),
+    )
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='customer')
+    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    items_json = models.CharField(max_length=5000, null=True, blank=True)
+    ordered_date = models.DateTimeField(auto_now_add=True)
+    ordered = models.BooleanField(default=False)
+    amount = models.FloatField()
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+
+    def __str__(self):
+        return "Order:%s -Customer: %s -Seller:%s" %(self.order.id, self.customer, self.seller)
+
