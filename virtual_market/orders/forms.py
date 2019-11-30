@@ -2,7 +2,7 @@ from django import forms
 
 PAYMENT_CHOICES = (
     ('S', 'Stripe'),
-    ('P', 'PayPal')
+    ('P', 'DUPAY')
 )
 
 

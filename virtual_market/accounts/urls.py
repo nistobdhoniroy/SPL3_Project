@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    #path('register/', seller_views.register, name='register'),
+    path('register/', seller_views.register, name='register'),
     path('register/customer', seller_views.CustomerSignUpView.as_view(template_name='accounts/signup-form.html'), name='register_customer' ),
     path('register/seller', seller_views.SellerSignUpView.as_view(template_name='accounts/signup-form.html'), name='register_seller' ),
     path('login/', auth_views.LoginView.as_view(template_name= 'accounts/login.html'), name='login'),

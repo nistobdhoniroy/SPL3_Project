@@ -1,6 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
 from .models import Product, Category, ProductRating, ProductComment
-
 from django.http import JsonResponse
 import datetime
 from django.contrib.auth.decorators import login_required
@@ -12,7 +11,7 @@ from accounts.decorators import seller_required, customer_required
 from django.contrib.auth import get_user_model
 from virtual_market.mixins import AjaxRequiredMixin
 from accounts.models import Seller
-from .custom_functions import get_similar_products
+from .custom_functions import get_similar_products, get_real_vendor_similar_prods
 from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -59,6 +58,9 @@ def productView(request, myid):
 
     same_products = get_similar_products(product.name, product.id)
 
+    similar_products_real_vendor = get_real_vendor_similar_prods(product.name)
+
+
     # print(type(test_same_products))
 
     context = {
@@ -67,19 +69,20 @@ def productView(request, myid):
         'comment_form': comment_form,
         'is_liked': is_liked,
         'total_likes': product.total_likes(),
-        'same_products': same_products
+        'same_products': same_products,
+        'similar_products_real_vendor': similar_products_real_vendor
     }
 
-    return render(request, 'store/product_detail.html', context )
+    return render(request, 'store/product_detail.html', context)
 
 
 def store_view(request, username):
     requested_seller = User.objects.filter(username=username)
-    seller = Seller.objects.get(user= requested_seller[0])
+    seller = Seller.objects.get(user=requested_seller[0])
 
     product = Product.objects.filter(seller=requested_seller[0])
 
-    return render(request, 'store/str_view.html', {'product': product, 'seller': seller})
+    return render(request, 'store/str_view.html', {'product': product, 'seller': seller, 'seller_user': requested_seller[0]})
 
 
 def home_view(request):
@@ -241,14 +244,13 @@ class ProductDeleteView(DeleteView):
 
 
 @login_required
-def dashboard(request, username):
-    requested_seller = request.user
-    product = Product.objects.filter(seller=requested_seller)
-
+@seller_required
+def dashboard(request):
     context = {
-        'product': product,
-        'seller': requested_seller}
-    return render(request, 'dashboard/dash_base.html', context)
+        'accounts': request.user,
+        "dashboard": "active"
+    }
+    return render(request, 'dashboard/seller_after_login.html', context)
 
 
 @login_required
@@ -257,49 +259,55 @@ def sellerProductListView(request):
 
     product = Product.objects.filter(seller=request.user)
     context = {
-                'product': product,
-                'accounts': request.user}
+        'product': product,
+        'accounts': request.user,
+        "prod_list": "active"
+    }
     return render(request, 'dashboard/product_list.html', context)
 
 
 class ProductRatingAjaxView(View):
 
-    def post(self, *args, **kwargs):
-        # if request.is_ajax():
-        # raise Http404
+    def post(self, request,  *args, **kwargs):
+        if not request.user.is_authenticated():
+            return JsonResponse({}, status=401)
+            # credit card required **
 
-        print("Hello I am in ")
-        print(self.request.user)
-        # if not self.request.user.is_authenticated():
-        #     return JsonResponse({}, status=401)
-        # credit card required **
-        print("I am ok")
+        user = request.user
+        product_id = request.POST.get("product_id")
+        rating_value = request.POST.get("rating_value")
 
-        # print("Hello PR1")
-        #
-        user = self.request.user
-        product_id = self.request.POST.get("product_id")
-        rating_value = self.request.POST.get("rating_value")
-        # rating_value = self.request.POST['rating_value']
-        #
         print(user, " Prod ", product_id, " Rating: ", rating_value)
-        # print("I am here", product_id)
-        # exists = Product.objects.filter(id=product_id).exists()
-        # if not exists:
-        #     return JsonResponse({}, status=404)
+        # print("Hello I am in ")
+        # print(self.request.user)
+        # if not self.request.user.is_authenticated:
+        #     return JsonResponse({}, status=401)
+
+        print(self.request.POST)
+        # # credit card required **
+        # print("I am ok")
         #
+        # # print("Hello PR1")
+        # #
+        # user = self.request.user
+        # product_id = self.request.POST.get("product_id")
+        # rating_value = self.request.POST.get("rating_value")
+        #
+        # print(user, " Prod ", product_id, " Rating: ", rating_value)
+        # print("I am here", product_id)
+
         # try:
         #     product_obj = Product.objects.get(id=product_id)
         # except:
         #     product_obj = Product.objects.filter(id=product_id).first()
         #
-        # print("Under Product Object ")
-        #
-        # # rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
-        # #     user=user,
-        # #     product=product_obj
-        # # )
-        #
+        # # print("Under Product Object ")
+        # #
+        # rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
+        #     user=user,
+        #     product=product_obj
+        # )
+        # #
         # try:
         #     rating_obj = ProductRating.objects.get(user=user, product=product_obj)
         # except ProductRating.MultipleObjectsReturned:
@@ -310,9 +318,9 @@ class ProductRatingAjaxView(View):
         #     rating_obj.product = product_obj
         #
         # rating_obj.rating = int(rating_value)
-        # # myproducts = user.myproducts.products.all()
-        # # if product_obj in myproducts:
-        # #     rating_obj.verified = True
+        # myproducts = user.myproducts.products.all()
+        # if product_obj in myproducts:
+        #     rating_obj.verified = True
         #
         # print(rating_obj.rating)
         # print("Hello PR")
@@ -321,7 +329,7 @@ class ProductRatingAjaxView(View):
         data = {
             "success": True
         }
-        return JsonResponse(data)
+        return HttpResponse(data)
 
 
 class ProductAPILikeToggle(APIView):

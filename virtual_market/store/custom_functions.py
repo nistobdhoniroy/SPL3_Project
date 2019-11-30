@@ -1,5 +1,6 @@
 import difflib
 from .models import Product
+from ecommerce_products.models import OtherProduct
 
 
 # Cosine similarity between two sentences
@@ -52,7 +53,7 @@ def get_cosine_similarity(sentence1, sentence2):
 def similarity_value(text1, text2):
     sequence = difflib.SequenceMatcher(isjunk=None, a=text1, b= text2)
     difference = sequence.ratio()
-    print(text1 + 'is: ' + str(difference))
+    # print(text1 + 'is: ' + str(difference))
     return difference
 
 
@@ -66,4 +67,16 @@ def get_similar_products(product_name, product_id):
             similar_dictionary.append(product)
         # if get_cosine_similarity(product.name, product_name) > threshold:
         #     similar_dictionary.append(product)
+    return similar_dictionary
+
+
+# Returns a list
+def get_real_vendor_similar_prods(product_name):
+    all_products = OtherProduct.objects.all()
+    threshold = 0.85
+    similar_dictionary = []
+    for product in all_products:
+        if similarity_value(product.title, product_name) > threshold:
+            similar_dictionary.append(product)
+
     return similar_dictionary

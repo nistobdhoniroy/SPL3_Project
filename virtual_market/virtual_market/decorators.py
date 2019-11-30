@@ -1,5 +1,4 @@
 from django.http import Http404, HttpResponseBadRequest
-from functools import wraps
 
 
 def ajax_required(function):

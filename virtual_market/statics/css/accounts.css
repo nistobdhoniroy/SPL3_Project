@@ -1,10 +1,12 @@
 
 .logo {
   font-family: 'Clicker Script', cursive;
+
+    color: #999999;
 }
 
 .logo a {
-  color: #212529;
+  color: #66598B;
   text-decoration: none;
 }
 

@@ -19,7 +19,7 @@ urlpatterns = [
     path('product/list', views.sellerProductListView, name='product_list'),
 
 
-    path('<str:username>/dashboard', views.dashboard, name='dashboard'),
+    path('seller/dashboard', views.dashboard, name='dashboard'),
 
     path('category/new', views.CategoryAddView.as_view(), name='add-category'),
     path('category/<int:pk>/update', views.CategoryUpdateView.as_view(), name='update-category'),

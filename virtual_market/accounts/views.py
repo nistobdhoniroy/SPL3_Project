@@ -13,40 +13,14 @@ from .tokens import account_activation_token
 from accounts.models import User
 from django.core.mail import EmailMessage
 from .models import Seller
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, View
 
 
 # Create your views here.
 
-# def register(request):
-#     if request.method == 'POST':
-#         form = CustomerRegisterForm(request.POST)
-#
-#         print(form.errors)
-#         if form.is_valid():
-#             seller = form.save(commit = False)
-#             seller.is_active = False
-#             seller.save()
-#             # username = form.cleaned_data.get('username')
-#             # messages.success(request, f'Account created for {username}.  You are now able to login')
-#             # return redirect('login')
-#             current_site = get_current_site(request)
-#             mail_subject = 'Activate your blog account.'
-#             message = render_to_string('acc_active_email.html', {
-#                 'accounts': seller,
-#                 'domain': current_site.domain,
-#                 'uid':urlsafe_base64_encode(force_bytes(seller.pk)),
-#                 'token':account_activation_token.make_token(seller),
-#             })
-#             to_email = form.cleaned_data.get('email')
-#             email = EmailMessage(
-#                         mail_subject, message, to=[to_email]
-#             )
-#             email.send()
-#             return HttpResponse('Please confirm your email address to complete the registration')
-#     else:
-#         form= CustomerRegisterForm()
-#     return render(request, 'accounts/register.html', {'form': form})
+def register(request):
+
+    return render(request, 'accounts/register.html')
 
 
 class CustomerSignUpView(CreateView):
@@ -158,4 +132,9 @@ def seller_home(request):
         'sellers': User.objects.all()
     }
     return render(request, 'accounts/seller_home.html', context)
+
+
+class SellerProfile(CreateView):
+    model = Seller
+    fields = ['store_name', 'store_location', 'store_logo']
 

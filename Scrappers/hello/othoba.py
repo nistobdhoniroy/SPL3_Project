@@ -1,8 +1,8 @@
 import scrapy
 
 
-class BagdoomSaree(scrapy.Spider):
-    name = 'daraz_products'
+class Othoba(scrapy.Spider):
+    name = 'othoba_products'
     start_urls = [
         'https://www.othoba.com/gents-shirts',
         'https://www.othoba.com/smartphone',
@@ -17,7 +17,7 @@ class BagdoomSaree(scrapy.Spider):
                     ".//div[@class='product-item']/div[@class='details']/div[@class='add-info']/div[@class='prices']/span[@class='price actual-price']/text()").get(),
                 'pr_link': "https://www.othoba.com/"+ quote.xpath(
                     ".//div[@class='product-item']/div[@class='details']/h2[@class='product-title']/a/@href").get(),
-
+                'seller': 'othoba'
             }
 
         next_page = response.xpath("//div[@class='pager']/ul/li[@class='next-page']/a/@href").get()

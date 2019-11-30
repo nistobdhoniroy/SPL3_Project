@@ -1,0 +1,66 @@
+{% extends 'store/basic.html' %}
+{% block title%} Virtual Market Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+
+
+    <div class="col my-4">
+        <div class="jumbotron">
+            <h1 class="display-4">Order Tracker</h1>
+            <p class="lead"> Your Order id: {{ order.id }} </p>
+            <hr class="my-4">
+            <p>Ordered Date: {{ order.ordered_date }}</p>
+            <p>Total Bill: Tk. {{ order.get_total }}</p>
+        </div>
+
+        <div class="jumbotron">
+             <h6 class="display-4">Order Details</h6>
+            {% for item_all_seller in item_list %}
+
+                {% for item in item_all_seller %}
+
+                    {% if not forloop.counter|divisibleby:"2" %}
+                        <h4 class="display-6">{{ item.seller.username }}</h4>
+                        <p> Status:
+                            {% if item.status == 'P' %} Pending
+                            {% elif  item.status == 'A' %} Accepted
+                            {% elif  item.status == 'R' %} Rejected
+                            {% elif  item.status == 'S' %} Shipped
+                            {% endif %}
+                        </p>
+                        <p> Amount: Tk. {{ item.amount }}</p>
+
+                    {% elif  forloop.counter|divisibleby:"2"%}
+
+                            <table class="table table-hover">
+                             <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">Item</th>
+                                  <th scope="col">Quantity</th>
+                                  <th scope="col">Price</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                               {%  for single_item in item %}
+                                <tr>
+                                  <th scope="row">{{ forloop.counter }}</th>
+                                  <td>{{ single_item.item.name }}</td>
+                                  <td>{{ single_item.quantity }}</td>
+                                  <td>Tk. {{ single_item.item.price }}</td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+
+                    {% endif %}
+
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+
+</div>
+
+{% endblock %}

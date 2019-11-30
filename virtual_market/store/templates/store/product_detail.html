@@ -1,5 +1,6 @@
 {% extends 'store/basic.html' %}
 {% load crispy_forms_tags %}
+{% load staticfiles %}
 
 {% block css %}
 .rating {
@@ -149,6 +150,42 @@
 {% endblock %}
 
 
+{% block js %}
+    <script>
+    $(document).ready(function() {
+        $(".rating input[value='{{ my_rating }}']").attr("checked", "checked");
+
+        $(".rating input[type='radio']").click(function(event){
+            // event.preventDefault()
+            var inputValue = $(this).val()
+            console.log(inputValue)
+            var request = $.ajax({
+                method: "POST",
+                url: "{% url 'ajax_rating' %}",
+                data: {
+                    product_id: "abc",
+                    rating_value: "inputValue"
+                }
+            })
+            request.done(function(data){
+            })
+            request.fail(function(jqXHR, textStatus){
+                if (jqXHR.status === 404) {
+                    alert("Page not found!")
+                } else if (jqXHR.status === 401) {
+                    alert("You must be logged in to do this.")
+                } else {
+                    alert("There was an error with your request. Please try again.")
+                }
+            })
+        })
+
+    })
+
+    </script>
+{% endblock %}
+
+
 
 {% block title%} {{product.name}} - {{product.seller.username}}{% endblock %}
 {% block content %}
@@ -202,7 +239,7 @@
 
 <div class="container">
 
-    <h3> Same Product at other stores</h3>
+    <h3> Same Product at VM stores</h3>
 
     {% if same_products|length > 0 %}
     {% for product in same_products %}
@@ -219,7 +256,6 @@
 {#				<a href="#" class="btn buy ">BUY</a>#}
         </div>
 
-
     {% endfor %}
     {% else%}
           <h4> No Products Found</h4>
@@ -227,6 +263,35 @@
 
 </div>
 
+
+
+<div class="container">
+
+    <h3> Same Product at Real Vendors</h3>
+
+    {% if similar_products_real_vendor|length > 0 %}
+        <div class="col-sm-2 product-grid">
+        {% for product in similar_products_real_vendor %}
+
+                <div class="image">
+                    <a href="{{ product.link }}">
+                        <img src="#" class="w-100">
+
+                    </a>
+                </div>
+                <h5 class="text-center"> {{ product.title }} </h5>
+                <h5 class="text-center">Taka.  {{ product.price }} </h5>
+                <h5 class="text-center">Seller: {{ product.seller}} </h5>
+        {#				<a href="#" class="btn buy ">BUY</a>#}
+
+
+        {% endfor %}
+         </div>
+    {% else%}
+          <h4> No Products Found</h4>
+    {% endif %}
+
+</div>
 
 
 <div class="container-fluid">
@@ -266,15 +331,12 @@
                         <strong>Product Rating</strong>
                     </div>
 
-                    <div class="row main-comment-section">
-                        <form class="rating" method="POST">
-                            {% csrf_token %}
-                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="Rocks!">5 stars</label>
-                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Pretty good">4 stars</label>
-                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Meh">3 stars</label>
-                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="Kinda bad">2 stars</label>
-                            <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="Sucks big time">1 star</label>
-                        </form>
+                    <div class="row main-comment-section rating">
+                        <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="Rocks!">5 stars</label>
+                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="Pretty good">4 stars</label>
+                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="Meh">3 stars</label>
+                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="Kinda bad">2 stars</label>
+                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="Sucks big time">1 star</label>
                     </div>
 
                     <div class="row main-comment-section">
@@ -330,47 +392,3 @@
 
 {% endblock %}
 
-
-{% block js %}
-
-    <script>
-    $(document).ready(function(){
-        $(".rating input[value='{{ my_rating }}']").attr("checked", "checked");
-
-        $(".rating input[type='radio']").click(function(event){
-            // event.preventDefault()
-            var inputValue = $(this).val();
-            console.log(inputValue);
-
-            var request = $.ajax({
-                method: "POST",
-                url: "{% url 'ajax_rating' %}",
-                contentType:'application/json',
-                dataType: 'json',
-                data: JSON.stringify({
-                    product_id: "abc",
-                    rating_value: inputValue,
-                    csrfmiddlewaretoken : '{{ csrf_token }}'
-                }),
-                encode: true
-            })
-
-            {#print({{ csrf_token }})#}
-            request.done(function(data){
-            })
-
-            request.fail(function(jqXHR, textStatus){
-                if (jqXHR.status === 404) {
-                    alert("Page not found!")
-                } else if (jqXHR.status === 401) {
-                    alert("You must be logged in to do this.")
-                } else {
-                    alert("There was an error with your request. Please try again.")
-                }
-            })
-        })
-
-    })
-
-    </script>
-{% endblock %}

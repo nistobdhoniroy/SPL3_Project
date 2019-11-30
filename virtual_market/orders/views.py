@@ -227,7 +227,7 @@ class CheckoutView(View):
                     zip=zip,
                     # same_billing_address=same_billing_address,
                     # save_info=save_info,
-                    payment_option=payment_option
+                    # payment_option=payment_option
                 )
                 billing_address.save()
                 order.billing_address = billing_address
@@ -235,6 +235,8 @@ class CheckoutView(View):
 
                 print(form.cleaned_data)
                 print("The form is valid")
+                if payment_option == "S":
+                    return redirect('payment', payment_option= payment_option)
                 return redirect('checkout')
             messages.warning(request, "Failed Checkout")
             return redirect('checkout')
@@ -456,9 +458,9 @@ class PaymentView(View):
 class OrderTracker(View):
     def get(self, *args, **kwargs):
         order = Order.objects.get(id=8)
-        print(order)
+        # print(order)
         order_all_sellers = OrderToSellers.objects.filter(order=order)
-        print(order_all_sellers)
+        # print(order_all_sellers)
 
         for individual_order_seller in order_all_sellers:
             items = order.items.filter(item__seller=individual_order_seller.seller)
@@ -470,55 +472,33 @@ class OrderTracker(View):
         orderId = self.request.POST.get('orderId', '')
         email = self.request.POST.get('email', '')
 
-        print("In post")
-        print(orderId)
+        # print("In post")
+        # print(orderId)
 
         try:
-            order = Order.objects.get(id=orderId)
-            print(order)
+            order = Order.objects.get(id=orderId, ordered= True)
+            # print(order)
 
             order_all_sellers = OrderToSellers.objects.filter(order=order)
-            print(order_all_sellers)
+            # print("Order all sellers: ", order_all_sellers)
 
+            item_list = []
             for individual_order_seller in order_all_sellers:
                 items = order.items.filter(item__seller=individual_order_seller.seller)
+                item_json= [individual_order_seller, items]
+                item_list.append(item_json)
 
-            order_data_list = [order, order_all_sellers]
-            print(order_data_list)
-
-            response = json.dumps(order_data_list)
-            print(response)
-
-            # if len(order) > 0:
-
-                # order_all_sellers = OrderToSellers.objects.filter(order=order)
-                # print("Order post tracker")
-                #
-                # print("Hello:", order_all_sellers)
-                # # print("Hello2:", order_all_sellers)
-                # # order_data_list.append(order)
-                # # order_data_list.append(order_all_sellers)
-                # # print("Order Data List: ", order_data_list)
-                #
-                # # response = json.dumps(order_data_list)
-                # #
-                # # print(response)
-                # for individual_order_seller in order_all_sellers:
-                #     items = order.items.filter(item__seller=individual_order_seller.seller)
-                #     print(items)
-                # update = OrderUpdate.objects.filter(order_id=orderId)
-                # updates = []
-                # for item in update:
-                #     updates.append({'text': item.update_desc, 'time': item.timestamp})
-                #     response = json.dumps([updates, order[0].items_json], default=str)
-            response = "ABC"
-            return HttpResponse(response)
-            # else:
-            #     return HttpResponse('{}')
+            # print(item_list)
+            context = {
+                'order': order,
+                'item_list': item_list
+            }
+            return render(self.request, "orders/tracker-success.html", context)
         except Exception as e:
-            print(e)
-            return HttpResponse('{}')
-        pass
+            messages.info(self.request, "Please Enter Valid order id or email")
+            return redirect('tracker')
+            # print(e)
+            # return HttpResponse('{}')
 
 
 @method_decorator([login_required, seller_required], name='dispatch')
