@@ -16,6 +16,7 @@ from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
+from django.db.models import Q, Avg, Count
 
 
 User = get_user_model()
@@ -38,11 +39,19 @@ def productView(request, myid):
     # Fetch the product using the id
     product = Product.objects.filter(id=myid).first()
 
+    store = Seller.objects.get(user=product.seller)
+
     comments = ProductComment.objects.filter(item=product).order_by('-id')
 
     is_liked = False
     if product.likes.filter(id=request.user.id).exists():
         is_liked = True
+
+    rating_avg = product.productrating_set.aggregate(Avg("rating"), Count("rating"))
+    if request.user.is_authenticated:
+        rating_obj = ProductRating.objects.filter(user=request.user, product=product)
+        if rating_obj.exists():
+            my_rating = rating_obj.first().rating
 
     if request.method == 'POST':
         comment_form = CommentForm(request.POST or None)
@@ -61,14 +70,15 @@ def productView(request, myid):
     similar_products_real_vendor = get_real_vendor_similar_prods(product.name)
 
 
-    # print(type(test_same_products))
-
     context = {
         'product': product,
         'comments': comments,
         'comment_form': comment_form,
         'is_liked': is_liked,
+        'store': store,
         'total_likes': product.total_likes(),
+        'rating_avg': rating_avg,
+        'my_rating': my_rating,
         'same_products': same_products,
         'similar_products_real_vendor': similar_products_real_vendor
     }
@@ -267,69 +277,50 @@ def sellerProductListView(request):
 
 
 class ProductRatingAjaxView(View):
+    def post(self, request, *args, **kwargs):
 
-    def post(self, request,  *args, **kwargs):
-        if not request.user.is_authenticated():
+        # print(self.request)
+        if not request.user.is_authenticated:
             return JsonResponse({}, status=401)
-            # credit card required **
+        # credit card required **
 
         user = request.user
         product_id = request.POST.get("product_id")
         rating_value = request.POST.get("rating_value")
+        exists = Product.objects.filter(id=product_id).exists()
 
-        print(user, " Prod ", product_id, " Rating: ", rating_value)
-        # print("Hello I am in ")
-        # print(self.request.user)
-        # if not self.request.user.is_authenticated:
-        #     return JsonResponse({}, status=401)
+        if not exists:
+            return JsonResponse({}, status=404)
 
-        print(self.request.POST)
-        # # credit card required **
-        # print("I am ok")
-        #
-        # # print("Hello PR1")
-        # #
-        # user = self.request.user
-        # product_id = self.request.POST.get("product_id")
-        # rating_value = self.request.POST.get("rating_value")
-        #
-        # print(user, " Prod ", product_id, " Rating: ", rating_value)
-        # print("I am here", product_id)
+        try:
+            product_obj = Product.objects.get(id=product_id)
+        except:
+            product_obj = Product.objects.filter(id=product_id).first()
 
-        # try:
-        #     product_obj = Product.objects.get(id=product_id)
-        # except:
-        #     product_obj = Product.objects.filter(id=product_id).first()
-        #
-        # # print("Under Product Object ")
-        # #
-        # rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
-        #     user=user,
-        #     product=product_obj
-        # )
-        # #
-        # try:
-        #     rating_obj = ProductRating.objects.get(user=user, product=product_obj)
-        # except ProductRating.MultipleObjectsReturned:
-        #     rating_obj = ProductRating.objects.filter(user=user, product=product_obj).first()
-        # except:
-        #     rating_obj = ProductRating()
-        #     rating_obj.user = user
-        #     rating_obj.product = product_obj
-        #
-        # rating_obj.rating = int(rating_value)
-        # myproducts = user.myproducts.products.all()
-        # if product_obj in myproducts:
-        #     rating_obj.verified = True
-        #
-        # print(rating_obj.rating)
-        # print("Hello PR")
-        # rating_obj.save()
-        #
+        rating_obj, rating_obj_created = ProductRating.objects.get_or_create(
+            user=user,
+            product=product_obj
+        )
+
+        try:
+            rating_obj = ProductRating.objects.get(user=user, product=product_obj)
+        except ProductRating.MultipleObjectsReturned:
+            rating_obj = ProductRating.objects.filter(user=user, product=product_obj).first()
+        except:
+            rating_obj = ProductRating()
+            rating_obj.user = user
+            rating_obj.product = product_obj
+
+        rating_obj.rating = int(rating_value)
+
+        print(rating_obj.rating)
+        print("Hello PR")
+        rating_obj.save()
+
         data = {
             "success": True
         }
-        return HttpResponse(data)
+        return JsonResponse(data)
 
 
 class ProductAPILikeToggle(APIView):
@@ -359,4 +350,16 @@ class ProductAPILikeToggle(APIView):
         return Response(data)
 
 
+class SearchItem(View):
+    def get(self, request, format=None):
+        query = request.GET.get('search')
+        similar_products_real_vendor = get_real_vendor_similar_prods(query)
 
+        # print(type(test_same_products))
+
+        context = {
+            'similar_products_real_vendor': similar_products_real_vendor
+        }
+
+        print(query)
+        return render(request, 'store/search.html', context)

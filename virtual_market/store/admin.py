@@ -10,7 +10,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('category_title', 'status', 'parent', 'seller')
 
 
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'rating')
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product)
-admin.site.register(ProductRating)
+admin.site.register(ProductRating, RatingAdmin)
 admin.site.register(ProductComment)

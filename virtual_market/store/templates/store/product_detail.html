@@ -3,6 +3,7 @@
 {% load staticfiles %}
 
 {% block css %}
+    <style>
 .rating {
     float:left;
      width: 200px;
@@ -52,12 +53,7 @@
     top:2px;
     left:2px;
 }
-
-
-
-// Carousel
-
-
+{#// Carousel#}
 
 /*********************************************
 					VIEW
@@ -147,6 +143,7 @@
     font-color: red;
 }
 
+</style>
 {% endblock %}
 
 
@@ -160,11 +157,12 @@
             var inputValue = $(this).val()
             console.log(inputValue)
             var request = $.ajax({
+                csrfmiddlewaretoken : '{{ csrf_token }}',
                 method: "POST",
                 url: "{% url 'ajax_rating' %}",
                 data: {
-                    product_id: "abc",
-                    rating_value: "inputValue"
+                    product_id: {{ product.id }},
+                    rating_value: inputValue
                 }
             })
             request.done(function(data){
@@ -193,9 +191,8 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home_view'%}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'store_view' product.seller.username %}"> {{  product.seller.profile.store_name }}</a></li>
-        <li class="breadcrumb-item"><a href="#">{{product.product_name}}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Data</li>
+        <li class="breadcrumb-item"><a href="{% url 'store_view' store.user.username %}"> {{  store.store_name }}</a></li>
+        <li class="breadcrumb-item active"><a href="#">{{product.name}}</a></li>
       </ol>
     </nav>
     <br>
@@ -241,6 +238,7 @@
 
     <h3> Same Product at VM stores</h3>
 
+    <div class="row">
     {% if same_products|length > 0 %}
     {% for product in same_products %}
         <div class="col-md-2 product-grid">
@@ -260,36 +258,37 @@
     {% else%}
           <h4> No Products Found</h4>
     {% endif %}
+    </div>
 
 </div>
 
 
-
 <div class="container">
-
     <h3> Same Product at Real Vendors</h3>
 
+    <div class="row">
     {% if similar_products_real_vendor|length > 0 %}
-        <div class="col-sm-2 product-grid">
         {% for product in similar_products_real_vendor %}
+        <div class="col-sm-2 product-grid">
 
                 <div class="image">
                     <a href="{{ product.link }}">
-                        <img src="#" class="w-100">
-
+                         {% if product.seller == "othoba" %}
+                        <img src="{% static "images/othoba.jpg" %}" class="w-100">
+                        {% elif product.seller == "daraz" %}
+                        <img src="/media/" class="w-100">
+                        {% endif %}
                     </a>
                 </div>
                 <h5 class="text-center"> {{ product.title }} </h5>
                 <h5 class="text-center">Taka.  {{ product.price }} </h5>
-                <h5 class="text-center">Seller: {{ product.seller}} </h5>
-        {#				<a href="#" class="btn buy ">BUY</a>#}
 
-
-        {% endfor %}
          </div>
+        {% endfor %}
     {% else%}
           <h4> No Products Found</h4>
     {% endif %}
+    </div>
 
 </div>
 

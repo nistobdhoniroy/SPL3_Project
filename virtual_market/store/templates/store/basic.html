@@ -55,9 +55,10 @@
                         <a class="nav-link" href="#"> Contact Us</a>
                     </li>
                     <li>
-                        <form class="form-inline my-2 my-lg-0">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        <form method='get' action='{% url 'search_product' %}' class="form-inline my-2 my-lg-0" >
+
+                            <input class="form-control mr-sm-3" type="search" placeholder="Search" aria-label="Search" name="search" id="search">
+                            <button class="btn btn-outline-success my-3 my-sm-0" type="submit">Search</button>
                         </form>
                     </li>
                 </ul>

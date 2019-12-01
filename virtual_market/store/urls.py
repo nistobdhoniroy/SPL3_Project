@@ -11,6 +11,8 @@ urlpatterns = [
     # url(r'^like/$', views.like_product, name='like_product'),
     # path('product/<int:myid>/like', views.ProductLikeToggle.as_view(), name='like_product'),
     path('product/<int:myid>/like', views.ProductAPILikeToggle.as_view(), name='like_product'),
+    path('search/products', views.SearchItem.as_view(), name='search_product'),
+
 
     # seller
     path('product/new', views.ProductAddView.as_view(), name='add-product'),
