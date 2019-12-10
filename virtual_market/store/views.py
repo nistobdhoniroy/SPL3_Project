@@ -11,7 +11,7 @@ from accounts.decorators import seller_required, customer_required
 from django.contrib.auth import get_user_model
 from virtual_market.mixins import AjaxRequiredMixin
 from accounts.models import Seller
-from .custom_functions import get_similar_products, get_real_vendor_similar_prods
+from .custom_functions import get_similar_products, get_real_vendor_similar_prods, recommendation_product
 from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -48,6 +48,7 @@ def productView(request, myid):
         is_liked = True
 
     rating_avg = product.productrating_set.aggregate(Avg("rating"), Count("rating"))
+    my_rating = 0
     if request.user.is_authenticated:
         rating_obj = ProductRating.objects.filter(user=request.user, product=product)
         if rating_obj.exists():
@@ -69,6 +70,31 @@ def productView(request, myid):
 
     similar_products_real_vendor = get_real_vendor_similar_prods(product.name)
 
+    # THis section for collaborative filtering recommendation system
+    product_id = myid
+    ratings = ProductRating.objects.filter(product__id=product_id)
+    for rating in ratings:
+        print(rating.product_id, rating.user.username, rating.rating)
+
+    rating_result = recommendation_product(ratings)
+
+    print(rating_result)
+
+    recommended_products = []
+    rating_thresh = 0
+    if len(rating_result) > 0:
+        print("Result:", rating_result)
+        for prod_rate_id in rating_result:
+            print(prod_rate_id, " ", rating_result[prod_rate_id])
+            if (rating_result[prod_rate_id] > rating_thresh) and (product_id != prod_rate_id):
+                print("Recommendation: ", prod_rate_id)
+                rec_product = Product.objects.get(id=prod_rate_id)
+                recommended_products.append(rec_product)
+
+    # print(recommended_products)
+    # print(ratings)
+
+    # This ends here for collaborative filtering recommendation system
 
     context = {
         'product': product,
@@ -80,7 +106,8 @@ def productView(request, myid):
         'rating_avg': rating_avg,
         'my_rating': my_rating,
         'same_products': same_products,
-        'similar_products_real_vendor': similar_products_real_vendor
+        'similar_products_real_vendor': similar_products_real_vendor,
+        'recommended_products': recommended_products
     }
 
     return render(request, 'store/product_detail.html', context)
@@ -312,9 +339,9 @@ class ProductRatingAjaxView(View):
             rating_obj.product = product_obj
 
         rating_obj.rating = int(rating_value)
-
-        print(rating_obj.rating)
-        print("Hello PR")
+        #
+        # print(rating_obj.rating)
+        # print("Hello PR")
         rating_obj.save()
 
         data = {
@@ -352,6 +379,7 @@ class ProductAPILikeToggle(APIView):
 
 class SearchItem(View):
     def get(self, request, format=None):
+
         query = request.GET.get('search')
         similar_products_real_vendor = get_real_vendor_similar_prods(query)
 
@@ -363,3 +391,10 @@ class SearchItem(View):
 
         print(query)
         return render(request, 'store/search.html', context)
+
+
+# def recommendProduct(request, product_id):
+#     product_id = 1
+#     ratings = ProductRating.objects.filter(product__id=product_id)
+#     print(ratings)
+#     pass

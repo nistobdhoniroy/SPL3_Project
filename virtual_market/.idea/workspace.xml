@@ -40,6 +40,12 @@
       </list>
     </option>
   </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="10" />
+    <option name="y" value="20" />
+    <option name="width" value="1346" />
+    <option name="height" value="688" />
+  </component>
   <component name="ProjectId" id="1SG8tcOVAPzQNs0SRnSOOxEE9ZE" />
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="sqlite" />
@@ -50,17 +56,17 @@
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\media\store" />
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market" />
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\orders\templates\orders" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\statics\images" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\statics\js" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\store\templates\store" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\store\statics\js" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\media\store" />
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market" />
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\orders\templates\orders" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -200,6 +206,21 @@
       <workItem from="1575047044636" duration="13289000" />
       <workItem from="1575094754048" duration="8521000" />
       <workItem from="1575113117347" duration="5108000" />
+      <workItem from="1575137983724" duration="5154000" />
+      <workItem from="1575187561322" duration="2547000" />
+      <workItem from="1575203759843" duration="577000" />
+      <workItem from="1575227415908" duration="2538000" />
+      <workItem from="1575284288380" duration="5176000" />
+      <workItem from="1575537768814" duration="9440000" />
+      <workItem from="1575573861974" duration="4760000" />
+      <workItem from="1575655227586" duration="3712000" />
+      <workItem from="1575710968096" duration="10382000" />
+      <workItem from="1575744198997" duration="1313000" />
+      <workItem from="1575794612920" duration="1349000" />
+      <workItem from="1575797508927" duration="4272000" />
+      <workItem from="1575805991323" duration="4764000" />
+      <workItem from="1575837611288" duration="2823000" />
+      <workItem from="1575958959237" duration="88000" />
     </task>
     <servers />
   </component>

@@ -139,8 +139,13 @@
 }
 
 .nav-tabs{
-    background: #2f2f1e;
+    background: white;
     font-color: red;
+}
+
+.w-100{
+    height: 80px;
+    width: 40px;
 }
 
 </style>
@@ -234,84 +239,28 @@
 </div>
 
 
-<div class="container">
-
-    <h3> Same Product at VM stores</h3>
-
-    <div class="row">
-    {% if same_products|length > 0 %}
-    {% for product in same_products %}
-        <div class="col-md-2 product-grid">
-            <div class="image">
-                <a href="{% url 'product_view' product.id %}">
-                    <img src="/media/{{product.image}}" class="w-100">
-
-                </a>
-            </div>
-            <h5 class="text-center"> {{ product.name }} </h5>
-            <h5 class="text-center">Taka.  {{ product.price }} </h5>
-            <h5 class="text-center">Seller: {{ product.seller.username }} </h5>
-{#				<a href="#" class="btn buy ">BUY</a>#}
-        </div>
-
-    {% endfor %}
-    {% else%}
-          <h4> No Products Found</h4>
-    {% endif %}
-    </div>
-
-</div>
-
-
-<div class="container">
-    <h3> Same Product at Real Vendors</h3>
-
-    <div class="row">
-    {% if similar_products_real_vendor|length > 0 %}
-        {% for product in similar_products_real_vendor %}
-        <div class="col-sm-2 product-grid">
-
-                <div class="image">
-                    <a href="{{ product.link }}">
-                         {% if product.seller == "othoba" %}
-                        <img src="{% static "images/othoba.jpg" %}" class="w-100">
-                        {% elif product.seller == "daraz" %}
-                        <img src="/media/" class="w-100">
-                        {% endif %}
-                    </a>
-                </div>
-                <h5 class="text-center"> {{ product.title }} </h5>
-                <h5 class="text-center">Taka.  {{ product.price }} </h5>
-
-         </div>
-        {% endfor %}
-    {% else%}
-          <h4> No Products Found</h4>
-    {% endif %}
-    </div>
-
-</div>
-
 
 <div class="container-fluid">
-    <div class="col-md-12 product-info">
-        <ul id="myTab" class="nav nav-tabs nav_tabs">
-            <li class="active li-nav"><a href="#service-one" data-toggle="tab">DESCRIPTION</a></li>
-            <li class="li-nav"><a href="#service-two" data-toggle="tab">Like- Ratings</a></li>
-            <li class="li-nav"><a href="#service-three" data-toggle="tab">REVIEWS</a></li>
-        </ul>
-        <div id="myTabContent" class="tab-content">
-            <div class="tab-pane fade in active" id="service-one">
 
-                <section class="container product-info">
+    <div class="col-md-12 product-info">
+
+        <nav>
+            <div class="nav nav-tabs row" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active col-sm-4" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Description</a>
+            <a class="nav-item nav-link col-sm-4" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Like-Review</a>
+            <a class="nav-item nav-link col-sm-4" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Comment</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                 <section class="container product-info">
                     <h1> {{product.name }} </h1>
                     <p> {{ product.description }}</p>
                 </section>
-
             </div>
-            <div class="tab-pane fade" id="service-two">
 
-                <section class="container">
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                 <section class="container">
 
                     <div class="row main-comment-section total-like-btn">
                         <h6> {{ total_likes }} Likes </h6>
@@ -342,49 +291,156 @@
                         {{ rating_avg.rating__avg}} Average Rating by {{ rating_avg.rating__count }}  Users
                     </div>
 
-                </section>
-
+                    </section>
             </div>
+            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
 
-            <div class="tab-pane fade" id="service-three">
+                    <h4 > Leave a comment!! </h4>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ comment_form|crispy }}
+                        {% if request.user.is_authenticated %}
+                            <input type="submit" value="Submit" class="btn btn-success">
+                        {% else %}
+                            <input type="submit" value="Submit" class="btn btn-success" disabled>
+                            <p> Please Login to leave a comment!! </p>
+                        {% endif %}
+                    </form>
 
-                 <h4 > Leave a comment!! </h4>
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ comment_form|crispy }}
-                    {% if request.user.is_authenticated %}
-                        <input type="submit" value="Submit" class="btn btn-success">
-                    {% else %}
-                        <input type="submit" value="Submit" class="btn btn-success" disabled>
-                        <p> Please Login to leave a comment!! </p>
-                    {% endif %}
-                </form>
-
-                <div class="row main-comment-section">
-                    <h3>Comment section </h3>
-                </div>
-
-                <div class="row main-comment-section">
-                     <p> {{ comments.count }} Comment{{ comments|pluralize }} </p>
-                </div>
-
-                <div class="row main-comment-section">
-                    <div class="col-sm-12">
-                    {% for comment in comments %}
-                        <blockquote class="blockquote">
-                          <p class="mb-0">{{ comment.content }}</p>
-                          <footer class="blockquote-footer">by <cite title="Source Title"> {{ comment.user.username }} at {{ comment.date_posted }}</cite></footer>
-                        </blockquote>
-                    {% endfor %}
+                    <div class="row main-comment-section">
+                        <h3>Comment section </h3>
                     </div>
-                </div>
+
+                    <div class="row main-comment-section">
+                         <p> {{ comments.count }} Comment{{ comments|pluralize }} </p>
+                    </div>
+
+                    <div class="row main-comment-section">
+                        <div class="col-sm-12">
+                        {% for comment in comments %}
+                            <blockquote class="blockquote">
+                              <p class="mb-0">{{ comment.content }}</p>
+                              <footer class="blockquote-footer">by <cite title="Source Title"> {{ comment.user.username }} at {{ comment.date_posted }}</cite></footer>
+                            </blockquote>
+                        {% endfor %}
+                        </div>
+                    </div>
 
             </div>
         </div>
-        <hr>
+
     </div>
 </div>
 
+
+<div class="container-fluid">
+    <h3>Similar Products </h3>
+    <div class="col-md-12 product-info">
+
+        <nav>
+            <div class="nav nav-tabs row" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active col-sm-4" id="nav-vm-tab" data-toggle="tab" href="#nav-vm" role="tab" aria-controls="nav-vm" aria-selected="true">Virtual Marketplace </a>
+            <a class="nav-item nav-link col-sm-4" id="nav-ecommerce-tab" data-toggle="tab" href="#nav-ecommerce" role="tab" aria-controls="nav-ecommerce" aria-selected="false">Other Stores</a>
+            <a class="nav-item nav-link col-sm-4" id="nav-recommend-tab" data-toggle="tab" href="#nav-recommend" role="tab" aria-controls="nav-recommend" aria-selected="false">Recommended Products</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-vm" role="tabpanel" aria-labelledby="nav-vm-tab">
+                <div class="container">
+                    <div class="row">
+                    {% if same_products|length > 0 %}
+                    {% for product in same_products %}
+                        <div class="col-md-2 product-grid">
+                            <div class="image">
+                                <a href="{% url 'product_view' product.id %}">
+                                    <img src="/media/{{product.image}}" class="w-100">
+
+                                </a>
+                            </div>
+                            <h5 class="text-center"> {{ product.name }} </h5>
+                            <h5 class="text-center">Taka.  {{ product.price }} </h5>
+                            <h5 class="text-center">Seller: {{ product.seller.username }} </h5>
+                {#				<a href="#" class="btn buy ">BUY</a>#}
+                        </div>
+
+                    {% endfor %}
+                    {% else%}
+                          <h4> No Products Found</h4>
+                    {% endif %}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="tab-pane fade" id="nav-ecommerce" role="tabpanel" aria-labelledby="nav-ecommerce-tab">
+
+
+                <div class="container">
+                    <div class="row">
+                    {% if similar_products_real_vendor|length > 0 %}
+                        {% for product in similar_products_real_vendor %}
+                        <div class="col-sm-2 product-grid">
+
+                                <div class="image">
+                                    <a href="{{ product.link }}">
+                                         {% if product.seller == "othoba" %}
+                                        <img src="{% static "images/othoba.jpg" %}" class="w-100">
+                                        {% elif product.seller == "daraz" %}
+                                        <img src="/media/" class="w-100">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <h5 class="text-center"> {{ product.title }} </h5>
+                                <h5 class="text-center">Taka.  {{ product.price }} </h5>
+
+                         </div>
+                        {% endfor %}
+                    {% else%}
+                          <h4> No Products Found</h4>
+                    {% endif %}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="tab-pane fade" id="nav-recommend" role="tabpanel" aria-labelledby="nav-recommend-tab">
+
+
+                <div class="container">
+                     <div class="row">
+                    {% if recommended_products|length > 0 %}
+                    {% for product in recommended_products %}
+                        <div class="col-md-2 product-grid">
+                            <div class="image">
+                                <a href="{% url 'product_view' product.id %}">
+                                    <img src="/media/{{product.image}}" class="w-100">
+
+                                </a>
+                            </div>
+                            <h5 class="text-center"> {{ product.name }} </h5>
+                            <h5 class="text-center">Taka.  {{ product.price }} </h5>
+                            <h5 class="text-center">Seller: {{ product.seller.username }} </h5>
+                {#				<a href="#" class="btn buy ">BUY</a>#}
+                        </div>
+
+                    {% endfor %}
+                    {% else%}
+                          <h4> No Products Recommended</h4>
+                    {% endif %}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 
