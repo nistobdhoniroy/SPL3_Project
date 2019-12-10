@@ -218,8 +218,12 @@
 
         </div>
         <div class="row">
-            <b> <p id="pricepr{{product.id}}">  Taka. {{product.price}} </p> </b>
-            <p>{{product.description}}</p>
+            <b> <p id="pricepr{{product.id}}">  Price: Taka. {{product.price}} </p> </b>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4"> <h5> Description</h5> </div>
+            <div class="col-sm-8"> <p>{{product.description}}</p> </div>
         </div>
         <div class="row">
             <span id="divpr{{product.id}}" class="divpr">

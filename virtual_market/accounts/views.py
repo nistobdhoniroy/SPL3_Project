@@ -99,32 +99,35 @@ def activate(request, uidb64, token):
   
 
 @login_required
-def profile(request):
+def seller_profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        # p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=Seller.objects.get(user=request.user))
 
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            messages.success(request, f'Your account has been updated.')
-            return redirect('profile')
+            messages.info(request, "Your account has been updated.")
+            return redirect('dashboard')
 
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile)
+
+        p_form = ProfileUpdateForm(instance=Seller.objects.get(user=request.user))
+        # p_form = ProfileUpdateForm(instance=request.user.profile)
 
     context={
         'u_form': u_form,
         'p_form': p_form,
         'accounts': request.user,
     }
-    return render(request, 'dashboard/dashboard.html', context)
+    return render(request, 'accounts/seller_profile.html', context)
 
 
 def view_profile(request):
     user = request.user
-    return render(request, 'accounts/seller_profile.html', {"accounts":user})
+    return render(request, 'accounts/seller_profile.html', {"accounts": user})
 
 
 def seller_home(request):

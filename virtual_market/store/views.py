@@ -290,17 +290,34 @@ def dashboard(request):
     return render(request, 'dashboard/seller_after_login.html', context)
 
 
-@login_required
-@seller_required
-def sellerProductListView(request):
+@method_decorator([login_required, seller_required], name='dispatch')
+class SellerProductListView(ListView):
+    model = Product
+    ordering = ('id', )
+    context_object_name = 'product'
+    template_name = 'dashboard/product_list.html'
+    paginate_by = 4
 
-    product = Product.objects.filter(seller=request.user)
-    context = {
-        'product': product,
-        'accounts': request.user,
-        "prod_list": "active"
-    }
-    return render(request, 'dashboard/product_list.html', context)
+    def get_context_data(self, **kwargs):
+        kwargs['accounts'] = self.request.user
+
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        return Product.objects.filter(seller=self.request.user)
+
+#
+# @login_required
+# @seller_required
+# def sellerProductListView(request):
+#
+#     product = Product.objects.filter(seller=request.user)
+#     context = {
+#         'product': product,
+#         'accounts': request.user,
+#         "prod_list": "active"
+#     }
+#     return render(request, 'dashboard/product_list.html', context)
 
 
 class ProductRatingAjaxView(View):
@@ -381,11 +398,13 @@ class SearchItem(View):
     def get(self, request, format=None):
 
         query = request.GET.get('search')
+        same_products = get_similar_products(query, 0)
         similar_products_real_vendor = get_real_vendor_similar_prods(query)
 
         # print(type(test_same_products))
 
         context = {
+            'same_products': same_products,
             'similar_products_real_vendor': similar_products_real_vendor
         }
 

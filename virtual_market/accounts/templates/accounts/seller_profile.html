@@ -1,9 +1,45 @@
 
-<div>
+{#<div>#}
+{##}
+{#    <h2> {{accounts.username}} </h2>#}
+{#    #}
+{#    <a href="{% url 'store_view' accounts.username %}"> user profile </a>#}
+{##}
+{##}
+{#</div>#}
 
-    <h2> {{accounts.username}} </h2>
-    
-    <a href="{% url 'store_view' accounts.username %}"> user profile </a>
+{% extends "dashboard/dashboard.html" %}
+{% load crispy_forms_tags %}
 
+{% block title %}
+    User Profile
+{% endblock %}
 
-</div>
+{% block main %}
+    <div class="row">
+        <div class="col-lg-1" style="padding-top: 20px;"></div>
+        <div class="content-section col-lg-8" style="padding-top: 40px;">
+        <div class="media">
+    {#        <img class="rounded-circle account-img" src="{{user.profile.image.url}}">#}
+            <div class="media-body">
+            <h2 class="account-heading"> {{accounts.username}} </h2>
+            <p class="text-secondary"> {{accounts.email}} </p>
+            </div>
+        </div>
+        <!-- FORM HERE -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Profile Info</legend>
+                {{ u_form|crispy }}
+                {{ p_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Update</button>
+            </div>
+        </form>
+        </div>
+     <div class="col-lg-2"></div>
+    </div>
+{% endblock %}
+

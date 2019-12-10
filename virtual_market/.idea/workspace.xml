@@ -40,12 +40,6 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="10" />
-    <option name="y" value="20" />
-    <option name="width" value="1346" />
-    <option name="height" value="688" />
-  </component>
   <component name="ProjectId" id="1SG8tcOVAPzQNs0SRnSOOxEE9ZE" />
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="sqlite" />
@@ -56,17 +50,17 @@
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\media\store" />
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market" />
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\orders\templates\orders" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\accounts\static\accounts" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\statics\images" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\statics\js" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market" />
       <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\store\templates\store" />
-      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\store\statics\js" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\media\store" />
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market" />
+      <recent name="C:\Users\Shihab\Dropbox\SPL3\SPL Ref\virtual_market\orders\templates\orders" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -220,7 +214,7 @@
       <workItem from="1575797508927" duration="4272000" />
       <workItem from="1575805991323" duration="4764000" />
       <workItem from="1575837611288" duration="2823000" />
-      <workItem from="1575958959237" duration="88000" />
+      <workItem from="1575958959237" duration="13893000" />
     </task>
     <servers />
   </component>

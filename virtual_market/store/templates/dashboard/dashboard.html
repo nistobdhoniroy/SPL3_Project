@@ -13,7 +13,13 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
         <link rel="stylesheet" type="text/css" href="{% static 'accounts/main.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'accounts/seller_dashboard_navbars.css' %}">
+{#        <link rel="stylesheet" type="text/css" href="{% static 'accounts/seller_dashboard_navbars.css' %}">#}
+
+        <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+
+        <!-- Font Awesome JS -->
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
         <title> {% block title %} Seller {% endblock %} </title>
         <style>
         {% block css %} {% endblock %}
@@ -23,117 +29,151 @@
     </head>
     <body>
 
-        <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name {{ accounts.username}} </a>
-            <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-            <ul class="navbar-nav px-3">
-                <li class="nav-item text-nowrap">
-                <a class="nav-link" href="{% url 'logout' %}">Sign out</a>
+         <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3> Virtual Martetplace</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <p> Seller Section of {{ accounts.username}} </p>
+
+
+                <li class="active">
+                    <a href="{% url 'dashboard' %}">Home</a>
                 </li>
+
+                <li>
+                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Product</a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                        <li>
+                            <a href="{% url 'product_list'%}">Product List</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'add-product' %}">New Product</a>
+                        </li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="#pageSubmenu2" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Category</a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu2">
+                        <li>
+                            <a href="{% url 'category_list' %}">Category List</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'add-category' %}">New Category</a>
+                        </li>
+
+                    </ul>
+                </li>
+
+                 <li>
+                    <a href="{% url 'order-list' %}">Order</a>
+                </li>
+
+                <li>
+                    <a href="{% url 'seller_profile' %}">Profile</a>
+                </li>
+            </ul>
+
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="{% url 'home_view' %}" class="download">Go to Store</a>
+                </li>
+
             </ul>
         </nav>
 
-<div class="container-fluid">
-  <div class="row">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-      <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-          <li class="nav-item {{dashboard}}">
-            <a class="nav-link" href="{% url 'dashboard' %}">
-              <span data-feather="home"></span>
-              Dashboard <span class="sr-only">(current)</span>
-            </a>
-          </li>
+        <!-- Page Content  -->
+        <div id="content">
 
-          <li class="nav-item">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
 
-            <a class="nav-link" href="{% url 'add-product' %}" >
-              <span data-feather="shopping-cart"></span>
-              Add Products
-            </a>
-          </li>
-          <li class="nav-item {{ prod_list }}">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                        <span>Toggle Sidebar</span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
 
-            <a class="nav-link" href="{% url 'product_list'%}" >
-              <span data-feather="users"></span>
-              Product List
-                {% if prod_list == 'active' %}
-                  HEllo
-              {% endif %}
-            </a>
-          </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{% url 'category_list' %}">
-              <span data-feather="shopping-cart"></span>
-               Category
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'order-list' %}">
-              <span data-feather="bar-chart-2"></span>
-              Orders
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                             <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home_view' %}">Go to Store</a>
+                            </li>
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
 
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="layers"></span>
-              Payments
-            </a>
-          </li>
-        </ul>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-          <span> Reports</span>
-          <a class="d-flex align-items-center text-muted" href="#">
-            <span data-feather="plus-circle"></span>
-          </a>
-        </h6>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file-text"></span>
-              Sales current
-            </a>
-          </li>
-{#          <li class="nav-item">#}
-{#            <a class="nav-link" href="#">#}
-{#              <span data-feather="file-text"></span>#}
-{#              Last quarter#}
-{#            </a>#}
-{#          </li>#}
-{#          <li class="nav-item">#}
-{#            <a class="nav-link" href="#">#}
-{#              <span data-feather="file-text"></span>#}
-{#              Social engagement#}
-{#            </a>#}
-{#          </li>#}
-{#          <li class="nav-item">#}
-{#            <a class="nav-link" href="#">#}
-{#              <span data-feather="file-text"></span>#}
-{#              Year-end sale#}
-{#            </a>#}
-{#          </li>#}
-        </ul>
-      </div>
-    </nav>
+            <div class="container my-4">
+                <div class="row justify-content-center">
+                <div class="col-md-11 col-sm-12">
+                  <div class="row">
+                    <div class="col-8">
+                      <h1 class="logo">
+                        <a  class="nameplate" href="{% url 'home_view' %}">
+                         Virtual Marketplace
 
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-        
-    {% block main %}
+                        </a>
+                      </h1>
+                    </div>
 
-    {% endblock %}
-            
-    </main>
-  </div>
-</div>
+                  </div>
+                  <div class="card mb-3">
+                    <div class="card-body">
+                      {% for message in messages %}
+                        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                      {% endfor %}
+                        {% block main %}
+
+                        {% endblock %}
+                    </div>
+                  </div>
+                  <footer>
+                    <a href="#">© virtualmarket.com</a>
+                    /
+                    <a href="#">Read more about this Virtual Market</a>
+                    /
+                    <a href="#">GitHub repository</a>
+                  </footer>
+                </div>
+              </div>
+            </div>
+
+
+        </div>
+    </div>
 
          <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        {% block js %}  {% endblock %} 
+
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#sidebarCollapse').on('click', function () {
+                    $('#sidebar').toggleClass('active');
+                });
+            });
+        </script>
+
+        {% block js %}  {% endblock %}
     </body>
 </html>
 

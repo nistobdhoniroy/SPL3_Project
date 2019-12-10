@@ -11,35 +11,65 @@
 {% endblock %}
 
 {% block content %}
-<br><br>
-<div class="container">
-    <h3> Search results across different web stores</h3>
 
-    {% if similar_products_real_vendor|length > 0 %}
-        <div class="col-sm-2 product-grid">
-        {% for product in similar_products_real_vendor %}
+
+<br><br>
+    <div class="container">
+        <h3> Search results across Virtual Marketplace stores</h3>
+        <div class="row">
+        {% if same_products|length > 0 %}
+        {% for product in same_products %}
+            <div class="col-md-2 product-grid">
                 <div class="image">
-                    <a href="{{ product.link }}">
-                        {% if product.seller == "othoba" %}
-                        <img src="{% static "images/othoba.jpg" %}" class="w-100">
-                        {% elif product.seller == "daraz" %}
-                        <img src="/media/" class="w-100">
-                        {% endif %}
+                    <a href="{% url 'product_view' product.id %}">
+                        <img src="/media/{{product.image}}" class="w-100">
+
                     </a>
                 </div>
-                <h5 class="text-center"> {{ product.title }} </h5>
+                <h5 class="text-center"> {{ product.name }} </h5>
                 <h5 class="text-center">Taka.  {{ product.price }} </h5>
-                <h5 class="text-center">Seller: {{ product.seller}} </h5>
-        {#				<a href="#" class="btn buy ">BUY</a>#}
+                <h5 class="text-center">Seller: {{ product.seller.username }} </h5>
 
+            </div>
 
         {% endfor %}
-         </div>
-    {% else%}
-          <h4> No Products Found</h4>
-    {% endif %}
+        {% else%}
+              <h4> No Products Found</h4>
+            <br><br>
+        {% endif %}
+        </div>
 
-</div>
+    </div>
+
+
+   <div class="container">
+         <h3> Search results across different web stores</h3>
+        <div class="row">
+        {% if similar_products_real_vendor|length > 0 %}
+            {% for product in similar_products_real_vendor %}
+            <div class="col-sm-2 product-grid">
+
+                    <div class="image">
+                        <a href="{{ product.link }}">
+                             {% if product.seller == "othoba" %}
+                            <img src="{% static "images/othoba.jpg" %}" class="w-100">
+                            {% elif product.seller == "daraz" %}
+                            <img src="/media/" class="w-100">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <h5 class="text-center"> {{ product.title }} </h5>
+                    <h5 class="text-center">Taka.  {{ product.price }} </h5>
+
+             </div>
+            {% endfor %}
+        {% else%}
+              <h4> No Products Found</h4>
+        {% endif %}
+        </div>
+
+    </div>
+
 <br><br>
 
 

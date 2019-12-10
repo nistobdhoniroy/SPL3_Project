@@ -27,9 +27,10 @@ urlpatterns = [
     path('password-reset/complete', 
         auth_views.PasswordResetDoneView.as_view(template_name= 'accounts/password_reset_complete.html'), 
         name='password_reset_complete'),
-    #path('profile/', seller_views.profile, name='profile'),
+
+    path('profile/', seller_views.seller_profile, name='seller_profile'),
     #url(r'profile/(?P<username>[a-zA-Z0-9]+)$', seller_views.view_profile, name='view-profile'),
 
-    path('profile/', seller_views.view_profile, name='view_profile'),
+    # path('profile/', seller_views.view_profile, name='view_profile'),
     # path('', seller_views.seller_home, name='seller_home'),
 ]
