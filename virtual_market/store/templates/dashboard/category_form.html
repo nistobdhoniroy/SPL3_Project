@@ -4,13 +4,13 @@
 
 {% block main%}
 
-    {{ accounts.username }}'s Category add
+{#    {{ accounts.username }}'s Category add#}
 
     <div class="content-section">
         <form method="POST" enctype="multipart/form-data" >
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4"> Add Category </legend>
+                <legend class="border-bottom mb-4"> New Category </legend>
                 {{ form|crispy }}
             </fieldset>
             <div class="form-group">

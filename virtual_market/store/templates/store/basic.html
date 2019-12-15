@@ -14,6 +14,8 @@
               crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
 
+        {% block links %} {% endblock %}
+
 
         <title> {% block title%} {% endblock %}</title>
 
@@ -26,6 +28,13 @@
             .logo{
                 color: #66598B;
                 font-family: 'Clicker Script', cursive;
+            }
+            .navbar-toggler{
+                border-color: rgb(255,102,203);
+            }
+            .navbar-toggler-icon{
+                 background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,102,203, 0.7)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+
             }
            {% block css %} {% endblock %}
         </style>
@@ -45,16 +54,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'home_view' %}">Home <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About Us</a>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="#">About Us</a>#}
+{#                    </li>#}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'tracker' %}">Tracker</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"> Contact Us</a>
+                        <a class="nav-link" href="{% url 'vm_contact' %}"> Contact Us</a>
                     </li>
-                    <li>
+                    <li style="padding-left: 40px;">
                         <form method='get' action='{% url 'search_product' %}' class="form-inline my-2 my-lg-0" >
 
                             <input class="form-control mr-sm-3" type="search" placeholder="Search" aria-label="Search" name="search" id="search">
@@ -89,10 +98,13 @@
                                 <a class="nav-link waves-effect" href=" {% url 'logout' %} ">
                                     <span class="clearfix d-none d-sm-inline-block"> Logout </span>
                                 </a>
-                              <div class="dropdown-divider"></div>
-                               <a class="nav-link waves-effect" href=" # ">
-                                    <span class="clearfix d-none d-sm-inline-block"> Profile </span>
-                                </a>
+
+                                {% if request.user.is_customer %}
+                                  <div class="dropdown-divider"></div>
+                                   <a class="nav-link waves-effect" href=" # ">
+                                        <span class="clearfix d-none d-sm-inline-block"> Profile </span>
+                                    </a>
+                                {% endif %}
 
                                 {% if request.user.is_seller %}
                                     <div class="dropdown-divider"></div>

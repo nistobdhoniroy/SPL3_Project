@@ -4,7 +4,7 @@
 {% block main %}
     <div class="row">
          <div class="col-sm-10">
-             <h1> {{accounts.username}}</h1>
+             <h2> Order List </h2>
          </div>
     </div>
 
@@ -18,7 +18,7 @@
             <th scope="col">Seller</th>
             <th scope="col">Status</th>
             <th scope="col">Date</th>
-            <th scope="col">Action</th>
+            <th scope="col">Process</th>
         </tr>
       </thead>
       <tbody>
@@ -43,7 +43,7 @@
 
                      <td>
                         <a href="{% url 'process-order'  pr.id %}">
-                            <button type="button" class="btn btn-primary">Process Order </button>
+                            <i class="far fa-edit"></i>
                         </a>
                     </td>
                 </tr>

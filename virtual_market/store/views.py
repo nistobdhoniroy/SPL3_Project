@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.db.models import Q, Avg, Count
-
+from orders.models import OrderItem, Order
 
 User = get_user_model()
 
@@ -111,6 +111,46 @@ def productView(request, myid):
     }
 
     return render(request, 'store/product_detail.html', context)
+
+
+def seller_product_view(request, myid):
+
+    product = Product.objects.get(id=myid)
+
+    store = Seller.objects.get(user=product.seller)
+
+    comments = ProductComment.objects.filter(item=product).order_by('-id')
+
+    rating_avg = product.productrating_set.aggregate(Avg("rating"), Count("rating"))
+    my_rating = 0
+    if request.user.is_authenticated:
+        rating_obj = ProductRating.objects.filter(user=request.user, product=product)
+        if rating_obj.exists():
+            my_rating = rating_obj.first().rating
+
+    product_id = myid
+    ratings = ProductRating.objects.filter(product__id=product_id)
+
+    buys = OrderItem.objects.filter(item__id=myid)
+
+    total_buys=0
+    for buy in buys:
+        total_buys = total_buys + buy.quantity
+
+    print("Total buys:", total_buys)
+
+    context = {
+        'product': product,
+        'comments': comments,
+        'store': store,
+        'total_likes': product.total_likes(),
+        'rating_avg': rating_avg,
+        'my_rating': my_rating,
+        'accounts': request.user,
+        'total_buys': total_buys
+    }
+
+    return render(request, 'dashboard/product_detail_seller.html', context)
 
 
 def store_view(request, username):
@@ -412,8 +452,4 @@ class SearchItem(View):
         return render(request, 'store/search.html', context)
 
 
-# def recommendProduct(request, product_id):
-#     product_id = 1
-#     ratings = ProductRating.objects.filter(product__id=product_id)
-#     print(ratings)
-#     pass
+

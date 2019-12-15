@@ -25,7 +25,9 @@ SECRET_KEY = '+p-e=22+onejz#ygz#w3%(8k7ei(99j^s02*xmv38*hs$0lu7y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -35,6 +37,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'store.apps.StoreConfig',
     'orders.apps.OrdersConfig',
+    'market.apps.MarketConfig',
     'crispy_forms',
     'rest_framework',
     'django.contrib.admin',

@@ -4,13 +4,12 @@
 
 {% block main%}
 
-    {{ seller.username }} product add
 
     <div class="content-section">
         <form method="POST" enctype="multipart/form-data" >
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4"> Add Product </legend>
+                <legend class="border-bottom mb-4"> New Product </legend>
                 {{ form|crispy }}
             </fieldset>
             <div class="form-group">

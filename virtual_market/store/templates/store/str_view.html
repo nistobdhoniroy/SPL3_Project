@@ -112,7 +112,8 @@ img.w-100{
                     </div>
                     <h5 class="text-center">{{ pr.name}}</h5>
                     <h5 class="text-center">Price: {{ pr.price}}</h5>
-                    <a href="#" class="btn buy ">BUY</a>
+
+                    <a href="{{ pr.get_add_to_cart_url }}" class="btn buy ">BUY</a>
                 </div>
             {% endfor %}
         {% else%}

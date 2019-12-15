@@ -12,7 +12,11 @@ urlpatterns = [
     path('checkout/', views.CheckoutView.as_view(), name='checkout'),
     path('payment/<payment_option>/', views.PaymentView.as_view(), name='payment'),
 
+    path('testpayment/dupay', views.DUPayPaymentView.as_view(), name='dupay-payment'),
+    path('confirm_order', views.ConfirmOrderView.as_view(), name='confirm_order'),
+
     path('tracker', views.OrderTracker.as_view(), name='tracker'),
+    path('details/<int:order_id>', views.order_details, name='order_details'),
 
     path('list', views.OrderListView.as_view(), name='order-list'),
     path('<int:pk>/process', views.OrderUpdateView.as_view(), name='process-order'),

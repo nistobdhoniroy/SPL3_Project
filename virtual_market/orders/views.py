@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 
@@ -15,6 +15,7 @@ from .forms import CheckoutForm
 import json
 from accounts.decorators import seller_required, customer_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 import stripe
 
@@ -81,17 +82,7 @@ def remove_from_cart(request, myid):
         return redirect('product_view', myid=item.id)
 
 
-# class OrderSummaryView(View):
-#     def get(self, *args, **kwargs):
-#         try:
-#             order = Order.objects.get(user=self.request.user, ordered=False)
-#             context = {
-#                 'object': order
-#             }
-#             return render(self.request, 'orders/order_summary.html', context)
-#         except ObjectDoesNotExist:
-#             messages.warning(self.request, "You do not have an active order")
-#             return redirect("/")
+
 
 class OrderSummaryView(View):
     def get(self, *args, **kwargs):
@@ -233,10 +224,14 @@ class CheckoutView(View):
                 order.billing_address = billing_address
                 order.save()
 
-                print(form.cleaned_data)
-                print("The form is valid")
+                # print(form.cleaned_data)
+                # print("The form is valid")
                 if payment_option == "S":
-                    return redirect('payment', payment_option= payment_option)
+                    return redirect('payment', payment_option=payment_option)
+
+                elif payment_option == "P":
+                    return redirect('dupay-payment')
+
                 return redirect('checkout')
             messages.warning(request, "Failed Checkout")
             return redirect('checkout')
@@ -244,79 +239,6 @@ class CheckoutView(View):
             messages.error(request, "You do not have an active order")
             return redirect("order-summary")
 
-
-# class PaymentView(View):
-#     def get(self, *args, **kwargs):
-#         return render(self.request, "orders/payment.html")
-#
-#     def post(self, *args, **kwargs):
-#         order = Order.objects.get(user=self.request.user, ordered=False)
-#         token = self.request.POST.get('stripeToken')
-#         amount = int( order.get_total()*100 )
-#
-#
-#         try:
-#             charge= stripe.Charge.create(
-#                 amount=amount,
-#                 currency="usd",
-#                 source=token,
-#             )
-#             payment = Payment()
-#             payment.stripe_charge_id = charge['id']
-#             payment.user = self.request.user
-#             payment.amount = order.get_total()
-#             payment.save()
-#
-#             order.ordered = True
-#             order.payment = payment
-#             order.save()
-#             messages.success(self.request, "Your order was successful")
-#             return redirect("home_view")
-#
-#         except stripe.error.CardError as e:
-#             body = e.json_body
-#             err = body.get('error', {})
-#             messages.warning(self.request, f"{err.get('message')}")
-#             return redirect("home_view")
-#
-#         except stripe.error.RateLimitError as e:
-#             # Too many requests made to the API too quickly
-#             messages.warning(self.request, "Rate limit error")
-#             return redirect("home_view")
-#
-#         except stripe.error.InvalidRequestError as e:
-#             # Invalid parameters were supplied to Stripe's API
-#             print(e)
-#             messages.warning(self.request, "Invalid parameters")
-#             return redirect("home_view")
-#
-#         except stripe.error.AuthenticationError as e:
-#             # Authentication with Stripe's API failed
-#             # (maybe you changed API keys recently)
-#             messages.warning(self.request, "Not authenticated")
-#             return redirect("home_view")
-#
-#         except stripe.error.APIConnectionError as e:
-#             # Network communication with Stripe failed
-#             messages.warning(self.request, "Network error")
-#             return redirect("home_view")
-#
-#         except stripe.error.StripeError as e:
-#             # Display a very generic error to the user, and maybe send
-#             # yourself an email
-#             messages.warning(
-#                 self.request, "Something went wrong. You were not charged. Please try again.")
-#             return redirect("home_view")
-#
-#         except Exception as e:
-#             # send an email to ourselves
-#             messages.warning(
-#                 self.request, "A serious error occurred. We have been notifed.")
-#             return redirect("home_view")
-#
-#         messages.warning(self.request, "Invalid data received")
-#         return redirect("/payment/stripe/")
-#
 
 class PaymentView(View):
     def get(self, *args, **kwargs):
@@ -455,6 +377,73 @@ class PaymentView(View):
         return redirect("/payment/stripe/")
 
 
+class DUPayPaymentView(View):
+    def get(self, *args, **kwargs):
+        print(self.request.user)
+
+        order = Order.objects.get(user=self.request.user, ordered=False)
+
+        print('Order is: ', order)
+        amount = int(order.get_total())
+
+        context = {
+            'order': order,
+            'amount': amount
+        }
+        return render(self.request, "orders/dupay_payment.html", context)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ConfirmOrderView(View):
+
+    def get(self, *args, **kwargs):
+        messages.success(self.request, "Your order was successful")
+        return redirect("home_view")
+
+    def post(self, *args, **kwargs):
+        print("Order Confirmed")
+        # try:
+        json_data = json.loads(self.request.body)
+        print(json_data)
+
+        status_payment = json_data['status']
+
+        # print(self.request.user)
+
+        if status_payment == 'completed':
+            payment = Payment()
+            payment.stripe_charge_id = json_data['transactionId']
+            # print(json_data['transactionId'])
+            # payment.user = settings.AUTH_USER_MODEL
+            payment.amount = json_data['amount']
+            payment.save()
+
+            print("I am in status")
+
+            order_id = int(json_data['extraInformation'])
+            order = Order.objects.get(id=order_id)
+
+            # order = Order.objects.get(user=self.request.user, ordered=False)
+            order.ordered = True
+            order.payment = payment
+            order.save()
+            # messages.success(self.request, "Your order was successful")
+
+            # hello = self.request.POST.get('username')
+
+            # print(hello)
+        # except:
+        #     print("Exception")
+
+        data = {
+            'name': 'Vitor',
+            'location': 'Finland',
+            'is_active': True,
+            'count': 28
+        }
+        return JsonResponse(data)
+
+
 class OrderTracker(View):
     def get(self, *args, **kwargs):
         order = Order.objects.get(id=8)
@@ -466,7 +455,13 @@ class OrderTracker(View):
             items = order.items.filter(item__seller=individual_order_seller.seller)
             # print("The Seller is: ", individual_order_seller.seller)
             # print(items)
-        return render(self.request, "orders/tracker.html")
+        all_order_customer = Order.objects.filter(user=self.request.user, ordered=True)
+        print(all_order_customer)
+        context ={
+            'all_order_customer': all_order_customer
+        }
+
+        return render(self.request, "orders/tracker.html", context)
 
     def post(self, *args, **kwargs):
         orderId = self.request.POST.get('orderId', '')
@@ -499,6 +494,26 @@ class OrderTracker(View):
             return redirect('tracker')
             # print(e)
             # return HttpResponse('{}')
+
+
+def order_details(request, order_id):
+    order = Order.objects.get(id=order_id, ordered=True)
+
+    order_all_sellers = OrderToSellers.objects.filter(order=order)
+
+    item_list = []
+    for individual_order_seller in order_all_sellers:
+        items = order.items.filter(item__seller=individual_order_seller.seller)
+        item_json = [individual_order_seller, items]
+        item_list.append(item_json)
+
+    # print(item_list)
+    context = {
+        'order': order,
+        'item_list': item_list
+    }
+    return render(request, "orders/tracker-success.html", context)
+
 
 
 @method_decorator([login_required, seller_required], name='dispatch')

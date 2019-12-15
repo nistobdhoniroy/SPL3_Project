@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block main %}
-    <h1> {{accounts.username}}</h1>
+    <h2> Product List </h2>
 
     <table class="table table-striped">
       <thead>
@@ -11,6 +11,7 @@
             <th scope="col">Product</th>
             <th scope="col">Price</th>
             <th scope="col">Catetory</th>
+            <th scope="col">Details</th>
             <th scope="col">Edit</th>
             <th scope="col">Remove</th>
         </tr>
@@ -27,13 +28,20 @@
                     <td>{{pr.category}}</td>
 
                     <td>
-                        <a href="{% url 'update-product'  pr.id %}">
-                            <button type="button" class="btn btn-primary">Edit </button>
+                        <a href="{% url 'product_seller_view'  pr.id %}">
+                           <i class="fas fa-align-justify"></i>
                         </a>
                     </td>
+
+                    <td>
+                        <a href="{% url 'update-product'  pr.id %}">
+                            <i class="far fa-edit"></i>
+                        </a>
+                    </td>
+
                     <td>
                         <a href="{% url 'delete-product' pr.id %}">
-                            <button type="button" class="btn btn-danger">Remove </button>
+                            <i class="fas fa-trash"></i>
                         </a>
                     </td>
                 </tr>

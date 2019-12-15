@@ -1,0 +1,74 @@
+{% extends 'store/basic.html' %}
+{% load static %}
+
+{% block title%} Contact Us {% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'accounts/style2.css' %}">
+
+    <style>
+        .hello{
+            border-color: #212529;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="row" style="padding-top: 40px; padding-bottom: 80px;">
+    <div class="col-sm-1"> </div>
+        <div class="col-sm-8">
+            <div class="row hello">
+                <div class="nav flex-column nav-tabs col-sm-4" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">About Us</a>
+                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Contact</a>
+                    <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Help</a>
+                </div>
+
+                <div class="tab-content col-sm-8" id="v-pills-tabContent">
+                  <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                      Welcome to Virtual Marketplace!! <br>
+                      Virtual Marketing: Simply put, virtual marketing is a term used to describe online advertising. Common formats include email marketing, social media marketing, display advertising, blogs, and other digital formats.
+                  </div>
+                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                    <div style="padding: 50px; ">
+
+                    <!-- Links -->
+                    <p>
+                      <i class="fas fa-home mr-3"></i> Institute of Information Technology</p>
+                    <p>
+                      <i class="fas fa-envelope mr-3"></i> vm@gmail.com</p>
+                    <p>
+                      <i class="fas fa-phone mr-3"></i> + 88017765323</p>
+                    <p>
+                      <i class="fas fa-print mr-3"></i> + 88013456799</p>
+
+                    </div>
+
+                </div>
+                  <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                       <div class="container my-3">
+                            <h3>Contact Us</h3>
+                            <form action="{% url 'vm_contact' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                <label for="desc">How May We Help You?</label>
+                                <textarea class="form-control" id="desc" name='desc' rows="5"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </form>
+                        </div>
+                  </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
